@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e  # Bei Fehlern sofort beenden
+
+echo "Entwicklungsumgebung wird eingerichtet..."
+
+# mise.toml im Workspace vertrauen
+WORKSPACE_PATH=${DEVPOD_WORKSPACE_ID:+/workspaces/"$DEVPOD_WORKSPACE_ID"}
+WORKSPACE_PATH=${WORKSPACE_PATH:-$(pwd)}
+
+echo "Vertraue mise.toml in $WORKSPACE_PATH"
+/usr/local/bin/mise trust "$WORKSPACE_PATH/mise.toml"
+
+# In mise.toml angegebene Tools installieren
+echo "Installiere Tools mit mise..."
+/usr/local/bin/mise install
+
+echo "Setup abgeschlossen! Entwicklungsumgebung ist bereit."
+
+# Installierte Tool-Versionen anzeigen
+echo "Installierte Tool-Versionen:"
+/usr/local/bin/mise list
