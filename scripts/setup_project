@@ -3,8 +3,16 @@
 if ! command -v cz >/dev/null && [ "$DEVPOD" = "true" ]; then
   git config --global push.autoSetupRemote true
   git config --global --add safe.directory /workspaces/devops-projekt
+  
+  # pipx installieren und PATH korrigieren
   pip install --user pipx
+  export PATH="$HOME/.local/bin:$PATH"
+  
+  # Commitizen und pre-commit installieren
   pipx install commitizen
+  pipx install pre-commit
+  # Auch Ruff installieren
+  pip install ruff
   pre-commit install
   pre-commit install --hook-type commit-msg
 fi
