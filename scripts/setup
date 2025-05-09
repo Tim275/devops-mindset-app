@@ -2,22 +2,18 @@
 set -e
 
 echo "Entwicklungsumgebung wird eingerichtet..."
-WORKSPACE_PATH=${DEVPOD_WORKSPACE_ID:+/workspaces/"$DEVPOD_WORKSPACE_ID"}
-WORKSPACE_PATH=${WORKSPACE_PATH:-$(pwd)}
-
-# Git-Setup ausführen
-chmod +x ./scripts/setup_git
-./scripts/setup_git
 
 # mise.toml vertrauen und Tools installieren
-echo "Vertraue mise.toml in $WORKSPACE_PATH"
-mise trust "$WORKSPACE_PATH/mise.toml" 2>/dev/null || true
+/usr/local/bin/mise trust /workspaces/"$DEVPOD_WORKSPACE_ID"/mise.toml && /usr/local/bin/mise install
 
-echo "Installiere Tools mit mise..."
-mise install
+# Git-Setup ausführen
+#./scripts/setup_git
 
 echo "Setup abgeschlossen!"
 mise list
 
-# mise für aktuelle Shell aktivieren
-eval "$(mise activate bash)"
+echo "🎉 Die Entwicklungsumgebung ist bereit!"
+echo "🧠 Befehle zum Entwickeln:"
+echo "  • python -m src.backend.main  - Anwendung ausführen"
+echo "  • git add . && cz commit      - Änderungen committen"
+echo "  • pre-commit run --all-files  - Code-Qualität prüfen"

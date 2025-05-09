@@ -1,16 +1,22 @@
 #!/bin/bash
 
-# Container bauen und starten
+# Container bauen
 docker build -t dev-container -f .devcontainer/Dockerfile .
 
-# Container mit korrekten Berechtigungen starten
+# Host Git-Konfiguration auslesen
+HOST_GIT_NAME=$(git config --get user.name)
+HOST_GIT_EMAIL=$(git config --get user.email)
+
+echo "Übertrage Git-Konfiguration: $HOST_GIT_NAME <$HOST_GIT_EMAIL>"
+
+# Container mit Git-Konfiguration aus dem Host starten
 docker run -it --rm \
   -v "$(pwd):/workspaces/devops-projekt" \
-  -v ~/.ssh:/home/vscode/.ssh:ro \
+  -v ~/.ssh:/home/vscode/.ssh \
   -e DEVPOD_WORKSPACE_ID=devops-projekt \
   -e DEVPOD=true \
-  -e GIT_AUTHOR_NAME="$(git config user.name)" \
-  -e GIT_AUTHOR_EMAIL="$(git config user.email)" \
-  -e GIT_COMMITTER_NAME="$(git config user.name)" \
-  -e GIT_COMMITTER_EMAIL="$(git config user.email)" \
-  dev-container bash
+  -e GIT_AUTHOR_NAME="$HOST_GIT_NAME" \
+  -e GIT_AUTHOR_EMAIL="$HOST_GIT_EMAIL" \
+  -e GIT_COMMITTER_NAME="$HOST_GIT_NAME" \
+  -e GIT_COMMITTER_EMAIL="$HOST_GIT_EMAIL" \
+  dev-container bash -c "cd /workspaces/devops-projekt && bash"
