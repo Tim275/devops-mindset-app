@@ -1,18 +1,22 @@
 #!/bin/bash
 
+# Aktiviere mise, um Python im PATH zu haben
+eval "$(mise activate bash)"
+
 if ! command -v cz >/dev/null && [ "$DEVPOD" = "true" ]; then
   git config --global push.autoSetupRemote true
-  git config --global --add safe.directory /workspaces/devops-projekt
+  git config --global --add safe.directory /workspaces/$(basename $(pwd))
   
-  # pipx installieren und PATH korrigieren
+  # Tools direkt mit pipx installieren (keine venv nötig)
   pip install --user pipx
   export PATH="$HOME/.local/bin:$PATH"
   
-  # Commitizen und pre-commit installieren
+  # Tools installieren
   pipx install commitizen
   pipx install pre-commit
-  # Auch Ruff installieren
   pip install ruff
+  
+  # Git-Hooks einrichten
   pre-commit install
   pre-commit install --hook-type commit-msg
 fi
