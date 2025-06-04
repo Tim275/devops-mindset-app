@@ -1,19 +1,26 @@
 #!/bin/bash
 set -e
 
-echo "Entwicklungsumgebung wird eingerichtet..."
+echo "🚀 Entwicklungsumgebung wird eingerichtet..."
 
 # mise.toml vertrauen und Tools installieren
-/usr/local/bin/mise trust /workspaces/"$DEVPOD_WORKSPACE_ID"/mise.toml && /usr/local/bin/mise install
+/usr/local/bin/mise trust /workspaces/"$DEVPOD_WORKSPACE_ID"/mise.toml
+/usr/local/bin/mise install
 
-# Git-Setup ausführen
-#./scripts/setup_git
+# mise in aktuelle Shell aktivieren
+eval "$(/usr/local/bin/mise activate bash)"
 
-echo "Setup abgeschlossen!"
-mise list
+# Python Dependencies installieren
+echo "📦 Installiere Python Dependencies..."
+pip install fastapi uvicorn pydantic
+
+echo "✅ Setup abgeschlossen!"
+/usr/local/bin/mise list
 
 echo "🎉 Die Entwicklungsumgebung ist bereit!"
 echo "🧠 Befehle zum Entwickeln:"
-echo "  • python -m src.backend.main  - Anwendung ausführen"
-echo "  • git add . && cz commit      - Änderungen committen"
-echo "  • pre-commit run --all-files  - Code-Qualität prüfen"
+echo "  • python -m src.backend.main        - FastAPI API starten"
+echo "  • curl http://localhost:22112/health - API testen"
+echo "  • open http://localhost:22112/docs   - Swagger UI öffnen"
+echo "  • git add . && cz commit            - Änderungen committen"
+echo "  • pre-commit run --all-files        - Code-Qualität prüfen"

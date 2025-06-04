@@ -1,15 +1,20 @@
 [project]
-name = "study-tracker-backend"
-version = "0.0.0"
-description = "Backend API for tracking study time for DevOps certifications"
-readme = "README.md"
-authors = [{ name = "Mischa van den Burg", email = "mischa@gmail.com" }]
+name = "devops-study-tracker"
+version = "0.1.0"
+description = "FastAPI application for tracking study time for DevOps certifications"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.5.0",
+]
 
 [project.scripts]
-study-tracker-api = "backend.main:main"
+devops-tracker = "src.backend.main:main"  # ✅ Pfad angepasst
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build]
+packages = ["src"]  # ✅ Hinzugefügt für src/ Layout
