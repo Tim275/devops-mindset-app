@@ -1,106 +1,89 @@
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
 import logging
-from typing import List, Optional
-from .models import StudySession, StudySessionCreate, Stats
-from .storage import save_session, get_all_sessions, get_sessions_by_tag, get_statistics
-from .config import (
-    APP_NAME,
-    API_HOST,
-    API_PORT,
-    CORS_ALLOW_ORIGINS,
-    CORS_ALLOW_CREDENTIALS,
-    CORS_ALLOW_METHODS,
-    CORS_ALLOW_HEADERS,
-)
+from datetime import datetime, timezone
+from typing import List
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+import uvicorn
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Create FastAPI application
-app = FastAPI(
-    title=APP_NAME,
-    description="API for tracking study time for DevOps studies",
-)
+app = FastAPI(title="DevOps Study Tracker", version="1.0.0")
 
-# Configure CORS
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ALLOW_ORIGINS,
-    allow_credentials=CORS_ALLOW_CREDENTIALS,
-    allow_methods=CORS_ALLOW_METHODS,
-    allow_headers=CORS_ALLOW_HEADERS,
+    allow_origins=["*"],  # In production, specify your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+# In-memory storage (like Mischa's simple approach)
+sessions_db = []
+
+
+# Pydantic models (like Mischa)
+class SessionCreate(BaseModel):
+    minutes: int
+    tag: str
+
+
+class Session(BaseModel):
+    id: int
+    minutes: int
+    tag: str
+    date: datetime
 
 
 @app.get("/")
 async def root():
-    """Root endpoint returning API information"""
-    return {"message": "DevOps Study Tracker API"}
+    return {"message": "DevOps Study Tracker API", "status": "running"}
 
 
 @app.get("/health")
 async def health():
-    """Health endpoint for kubernetes probes"""
-    return {"status": "healthy"}
+    return {"status": "healthy", "service": "backend"}
 
 
-@app.post("/sessions", response_model=StudySession)
-async def create_session(session: StudySessionCreate):
+@app.get("/sessions", response_model=List[Session])
+async def get_sessions():
+    """Get all study sessions"""
+    logger.info(f"Returning {len(sessions_db)} sessions")
+    return sessions_db
+
+
+@app.post("/sessions", response_model=Session)
+async def create_session(session: SessionCreate):
     """Create a new study session"""
-    logger.info(
-        f"Creating new session: {session.minutes} minutes with tag: {session.tag}"
+    new_session = Session(
+        id=len(sessions_db) + 1,
+        minutes=session.minutes,
+        tag=session.tag,
+        date=datetime.now(timezone.utc),
     )
-    try:
-        new_session = save_session(session)
-        return new_session
-    except Exception as e:
-        logger.error(f"Error creating session: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error creating session: {str(e)}")
+    sessions_db.append(new_session)
+    logger.info(f"Created session: {session.minutes} minutes, tag: {session.tag}")
+    return new_session
 
 
-@app.get("/sessions", response_model=List[StudySession])
-async def read_sessions(
-    tag: Optional[str] = Query(None, description="Filter sessions by tag"),
-):
-    """Get all study sessions, optionally filtered by tag"""
-    try:
-        if tag:
-            logger.info(f"Fetching sessions with tag: {tag}")
-            return get_sessions_by_tag(tag)
-        else:
-            logger.info("Fetching all sessions")
-            return get_all_sessions()
-    except Exception as e:
-        logger.error(f"Error fetching sessions: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Error fetching sessions: {str(e)}"
-        )
+@app.delete("/sessions/{session_id}")
+async def delete_session(session_id: int):
+    """Delete a study session"""
+    global sessions_db
+    original_length = len(sessions_db)
+    sessions_db = [s for s in sessions_db if s.id != session_id]
 
+    if len(sessions_db) == original_length:
+        raise HTTPException(status_code=404, detail="Session not found")
 
-@app.get("/stats", response_model=Stats)
-async def read_stats():
-    """Get aggregated statistics about study sessions"""
-    logger.info("Fetching statistics")
-    try:
-        return get_statistics()
-    except Exception as e:
-        logger.error(f"Error fetching statistics: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Error fetching statistics: {str(e)}"
-        )
-
-
-def main():
-    logger.info(f"Starting {APP_NAME} API")
-    uvicorn.run(
-        "src.backend.main:app", host=API_HOST, port=API_PORT, reload=True
-    )  # ✅ Pfad angepasst
+    logger.info(f"Deleted session with id: {session_id}")
+    return {"message": "Session deleted successfully"}
 
 
 if __name__ == "__main__":
-    main()
+    logger.info("Starting DevOps Study Tracker Backend")
+    uvicorn.run("main:app", host="0.0.0.0", port=22112, reload=True)
