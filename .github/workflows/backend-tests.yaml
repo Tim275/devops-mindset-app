@@ -3,7 +3,7 @@ name: Backend Tests
 on:
   pull_request:
     paths:
-      - 'devops-projekt/src/backend/**'              # ✅ Mit devops-projekt prefix
+      - 'devops-projekt/src/backend/**'              # ✅ Full path to your backend
       - '.github/workflows/backend-tests.yaml'
       - 'devops-projekt/mise.toml'
   push:
@@ -12,30 +12,13 @@ on:
       - 'devops-projekt/src/backend/**'
 
 jobs:
-  check_paths:
-    runs-on: ubuntu-latest
-    outputs:
-      should_run: ${{ steps.filter.outputs.backend }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3.0.2
-        id: filter
-        with:
-          filters: |
-            backend:
-              - 'devops-projekt/src/backend/**'        # ✅ Full path
-              - '.github/workflows/backend-tests.yaml'
-              - 'devops-projekt/mise.toml'
-
   test:
-    name: Backend Tests & Quality
-    needs: check_paths
-    if: needs.check_paths.outputs.should_run == 'true'
+    name: Backend Tests
     runs-on: ubuntu-latest
     
     defaults:
       run:
-        working-directory: ./devops-projekt/src/backend  # ✅ Full path
+        working-directory: ./devops-projekt/src/backend   # ✅ Full path
 
     steps:
       - name: Checkout code
