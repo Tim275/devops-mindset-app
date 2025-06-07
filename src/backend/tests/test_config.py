@@ -2,14 +2,14 @@ import os
 from unittest import mock
 
 from backend.config import (
-    APP_NAME,
     API_HOST,
     API_PORT,
-    DATA_DIR,
-    CORS_ALLOW_ORIGINS,
-    CORS_ALLOW_METHODS,
-    CORS_ALLOW_HEADERS,
+    APP_NAME,
     CORS_ALLOW_CREDENTIALS,
+    CORS_ALLOW_HEADERS,
+    CORS_ALLOW_METHODS,
+    CORS_ALLOW_ORIGINS,
+    DATA_DIR,
 )
 
 
@@ -42,6 +42,7 @@ def test_settings_from_env():
     """Test that Settings loads values from environment variables."""
     # Force reload of the config module to get updated environment variables
     import importlib
+
     import backend.config
 
     importlib.reload(backend.config)
@@ -50,10 +51,10 @@ def test_settings_from_env():
     from backend.config import (
         API_HOST,
         API_PORT,
-        CORS_ALLOW_ORIGINS,
-        CORS_ALLOW_METHODS,
-        CORS_ALLOW_HEADERS,
         CORS_ALLOW_CREDENTIALS,
+        CORS_ALLOW_HEADERS,
+        CORS_ALLOW_METHODS,
+        CORS_ALLOW_ORIGINS,
     )
 
     assert API_HOST == "127.0.0.1"

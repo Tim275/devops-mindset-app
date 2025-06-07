@@ -1,6 +1,7 @@
-from fastapi import FastAPI
-from datetime import datetime
 import logging
+from datetime import datetime
+
+from fastapi import FastAPI
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

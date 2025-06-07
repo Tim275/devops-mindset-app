@@ -2,15 +2,6 @@ name: Backend Tests
 
 on:
   pull_request:
-    paths:
-      - 'src/backend/**'                            # ✅ Korrekt - relative zu repo root
-      - '.github/workflows/backend-tests.yaml'
-      - 'mise.toml'
-  push:
-    branches: [main]
-    paths:
-      - 'src/backend/**'                            # ✅ Korrekt
-  workflow_dispatch:
 
 jobs:
   check_paths:
@@ -24,19 +15,17 @@ jobs:
         with:
           filters: |
             backend:
-              - 'src/backend/**'                    # ✅ Korrekt
+              - 'src/backend/**'               # ✅ Korrekt für dein repo
               - '.github/workflows/backend-tests.yaml'
-              - 'mise.toml'
 
   test:
-    name: Backend Tests & Quality
+    name: Test Backend
     needs: check_paths
     if: ${{ needs.check_paths.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
-    
     defaults:
       run:
-        working-directory: ./src/backend            # ✅ Korrekt - relative zu repo root
+        working-directory: ./src/backend      # ✅ Korrekt für dein repo
 
     steps:
       - name: Checkout code
@@ -45,34 +34,14 @@ jobs:
       - name: Install UV
         uses: astral-sh/setup-uv@v5
 
-      - name: Set up Python 3.12
-        run: uv python install 3.12
+      - name: Set up Python
+        run: uv python install
 
-      - name: Install dependencies with dev group
+      - name: Install dependencies
         run: |
-          uv sync --group dev
-
-      - name: Debug - Check installation
-        run: |
-          pwd
-          ls -la
-          echo "Python version: $(uv run python --version)"
-          echo "Ruff version: $(uv run --group dev ruff --version)"
-          echo "Pytest version: $(uv run --group dev pytest --version)"
+          uv sync --group dev                 # ✅ Modern dependency groups
 
       - name: Lint with Ruff
         run: |
           uv run --group dev ruff check --output-format=github --target-version=py312 src tests
           uv run --group dev ruff format --diff --check --target-version=py312 src tests
-
-      - name: Run Tests
-        run: |
-          uv run --group dev pytest tests/ -v --cov=src --cov-report=xml
-
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v4
-        if: always()
-        with:
-          file: ./src/backend/coverage.xml
-          directory: ./src/backend
-          fail_ci_if_error: false

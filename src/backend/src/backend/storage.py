@@ -1,12 +1,12 @@
 import csv
+import logging
 import os
 import uuid
 from datetime import datetime
-from typing import List, Dict
-import logging
+from typing import Dict, List
 
-from .models import StudySession, StudySessionCreate, Stats
 from .config import DATA_DIR
+from .models import Stats, StudySession, StudySessionCreate
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -116,9 +116,7 @@ def get_statistics() -> Stats:
         sessions_by_tag=sessions_by_tag,
     )
 
-    logger.info(
-        f"Calculated statistics: {total_minutes} minutes across {len(sessions)} sessions"
-    )
+    logger.info(f"Stats: {total_minutes}min across {len(sessions)} sessions")
     return stats
 
 
