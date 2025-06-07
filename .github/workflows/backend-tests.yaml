@@ -1,8 +1,15 @@
-# .github/workflows/backend-tests.yaml
 name: Backend Tests
 
 on:
   pull_request:
+    paths:
+      - 'devops-projekt/src/backend/**'              # ✅ Mit devops-projekt prefix
+      - '.github/workflows/backend-tests.yaml'
+      - 'devops-projekt/mise.toml'
+  push:
+    branches: [main]
+    paths:
+      - 'devops-projekt/src/backend/**'
 
 jobs:
   check_paths:
@@ -16,17 +23,19 @@ jobs:
         with:
           filters: |
             backend:
-              - 'src/backend/**'
+              - 'devops-projekt/src/backend/**'        # ✅ Full path
               - '.github/workflows/backend-tests.yaml'
+              - 'devops-projekt/mise.toml'
 
   test:
-    name: Test Backend
+    name: Backend Tests & Quality
     needs: check_paths
-    if: ${{ needs.check_paths.outputs.should_run == 'true' }}
+    if: needs.check_paths.outputs.should_run == 'true'
     runs-on: ubuntu-latest
+    
     defaults:
       run:
-        working-directory: ./src/backend
+        working-directory: ./devops-projekt/src/backend  # ✅ Full path
 
     steps:
       - name: Checkout code
@@ -35,14 +44,17 @@ jobs:
       - name: Install UV
         uses: astral-sh/setup-uv@v5
 
-      - name: Set up Python
-        run: uv python install
+      - name: Set up Python 3.12
+        run: uv python install 3.12
 
       - name: Install dependencies
-        run: |
-          uv sync --locked --dev
+        run: uv sync --locked --dev
 
       - name: Lint with Ruff
         run: |
-          uv run ruff check --output-format=github --target-version=py313 src tests
-          uv run ruff format --diff --check --target-version=py313 src tests
+          uv run ruff check --output-format=github --target-version=py312 src tests
+          uv run ruff format --diff --check --target-version=py312 src tests
+
+      - name: Run Tests
+        run: |
+          uv run pytest tests/ -v --cov=src --cov-report=xml
