@@ -13,5 +13,12 @@ repos:
 
 
       #### cz commit
+# 1. Lass ruff alle Probleme automatisch fixen
+#ruff check --fix src/
 
+# 2. Auto-format nochmal
+#ruff format src/
+
+# 3. Check ob alles clean ist
+#ruff check src/
       
