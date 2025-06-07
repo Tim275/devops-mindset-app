@@ -3,22 +3,40 @@ name: Backend Tests
 on:
   pull_request:
     paths:
-      - 'devops-projekt/src/backend/**'              # ✅ Full path to your backend
+      - 'src/backend/**'                            # ✅ Korrekt - relative zu repo root
       - '.github/workflows/backend-tests.yaml'
-      - 'devops-projekt/mise.toml'
+      - 'mise.toml'
   push:
     branches: [main]
     paths:
-      - 'devops-projekt/src/backend/**'
+      - 'src/backend/**'                            # ✅ Korrekt
+  workflow_dispatch:
 
 jobs:
+  check_paths:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3.0.2
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'src/backend/**'                    # ✅ Korrekt
+              - '.github/workflows/backend-tests.yaml'
+              - 'mise.toml'
+
   test:
-    name: Backend Tests
+    name: Backend Tests & Quality
+    needs: check_paths
+    if: ${{ needs.check_paths.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     
     defaults:
       run:
-        working-directory: ./devops-projekt/src/backend   # ✅ Full path
+        working-directory: ./src/backend            # ✅ Korrekt - relative zu repo root
 
     steps:
       - name: Checkout code
@@ -30,14 +48,31 @@ jobs:
       - name: Set up Python 3.12
         run: uv python install 3.12
 
-      - name: Install dependencies
-        run: uv sync --locked --dev
+      - name: Install dependencies with dev group
+        run: |
+          uv sync --group dev
+
+      - name: Debug - Check installation
+        run: |
+          pwd
+          ls -la
+          echo "Python version: $(uv run python --version)"
+          echo "Ruff version: $(uv run --group dev ruff --version)"
+          echo "Pytest version: $(uv run --group dev pytest --version)"
 
       - name: Lint with Ruff
         run: |
-          uv run ruff check --output-format=github --target-version=py312 src tests
-          uv run ruff format --diff --check --target-version=py312 src tests
+          uv run --group dev ruff check --output-format=github --target-version=py312 src tests
+          uv run --group dev ruff format --diff --check --target-version=py312 src tests
 
       - name: Run Tests
         run: |
-          uv run pytest tests/ -v --cov=src --cov-report=xml
+          uv run --group dev pytest tests/ -v --cov=src --cov-report=xml
+
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          file: ./src/backend/coverage.xml
+          directory: ./src/backend
+          fail_ci_if_error: false
