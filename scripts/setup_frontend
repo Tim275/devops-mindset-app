@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "📦 Setting up Frontend..."
+cd frontend
+uv sync  
+echo "✅ Frontend ready"

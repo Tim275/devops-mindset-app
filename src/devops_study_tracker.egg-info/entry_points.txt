@@ -1,3 +1,0 @@
-[console_scripts]
-backend = src.backend.main:main
-frontend = src.frontend.main:main

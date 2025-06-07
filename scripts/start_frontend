@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "🚀 Starting Frontend on Port 22111..."
 eval "$(mise activate bash)"
-cd /workspaces/devops-projekt
 
-# Direct path to frontend main.py - KEEP IT SIMPLE!
-python src/frontend/src/frontend/main.py
+# Use monorepo structure (working)
+cd src/frontend
+python main.py

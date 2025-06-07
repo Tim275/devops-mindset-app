@@ -1,0 +1,127 @@
+#!/bin/bash
+
+# Docker Compose Management Script (Mischa Style)
+set -e
+
+COMPOSE_FILE="docker-compose.yml"
+PROJECT_NAME="devops-study-tracker"
+
+usage() {
+    echo "🐳 Docker Compose Manager (Mischa Style)"
+    echo "Usage: $0 {build|up|down|restart|logs|health|clean}"
+    echo ""
+    echo "Commands:"
+    echo "  build    - Build all containers"
+    echo "  up       - Start all services"
+    echo "  down     - Stop all services"
+    echo "  restart  - Restart all services"
+    echo "  logs     - Show service logs"
+    echo "  health   - Check service health"
+    echo "  clean    - Clean up everything"
+    echo ""
+    exit 1
+}
+
+build_services() {
+    echo "🔨 Building services..."
+    docker compose -f $COMPOSE_FILE build --no-cache
+    echo "✅ Build complete"
+}
+
+start_services() {
+    echo "🚀 Starting services..."
+    docker compose -f $COMPOSE_FILE up -d
+    echo "⏱️  Waiting for services to be ready..."
+    sleep 15
+    check_health
+}
+
+stop_services() {
+    echo "🛑 Stopping services..."
+    docker compose -f $COMPOSE_FILE down
+    echo "✅ Services stopped"
+}
+
+restart_services() {
+    echo "🔄 Restarting services..."
+    stop_services
+    start_services
+}
+
+show_logs() {
+    echo "📋 Service Logs:"
+    echo "=================="
+    echo "Backend:"
+    docker compose -f $COMPOSE_FILE logs --tail 10 backend
+    echo ""
+    echo "Frontend:"
+    docker compose -f $COMPOSE_FILE logs --tail 10 frontend
+}
+
+check_health() {
+    echo "🧪 Health Check:"
+    echo "================="
+    
+    # Backend health
+    echo -n "Backend (22112): "
+    if curl -s http://localhost:22112/health > /dev/null; then
+        echo "✅ Healthy"
+    else
+        echo "❌ Unhealthy"
+    fi
+    
+    # Frontend health
+    echo -n "Frontend (22111): "
+    if curl -s http://localhost:22111/health > /dev/null; then
+        echo "✅ Healthy"
+    else
+        echo "❌ Unhealthy"
+    fi
+    
+    # Frontend-Backend connectivity
+    echo -n "Frontend->Backend: "
+    CONNECTIVITY=$(curl -s http://localhost:22111/health | jq -r '.backend_connectivity' 2>/dev/null || echo "false")
+    if [ "$CONNECTIVITY" = "true" ]; then
+        echo "✅ Connected"
+    else
+        echo "❌ Disconnected"
+    fi
+    
+    echo ""
+    echo "📊 Container Status:"
+    docker compose -f $COMPOSE_FILE ps
+}
+
+clean_up() {
+    echo "🧹 Cleaning up..."
+    docker compose -f $COMPOSE_FILE down -v --remove-orphans
+    docker system prune -f
+    echo "✅ Cleanup complete"
+}
+
+case "${1:-help}" in
+    build)
+        build_services
+        ;;
+    up)
+        start_services
+        ;;
+    down)
+        stop_services
+        ;;
+    restart)
+        restart_services
+        ;;
+    logs)
+        show_logs
+        ;;
+    health)
+        check_health
+        ;;
+    clean)
+        clean_up
+        ;;
+    *)
+        usage
+        ;;
+esac
