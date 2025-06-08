@@ -6,9 +6,7 @@ on:
       - 'src/backend/**'
       - '.github/workflows/backend-tests.yaml'
   push:
-    branches: [main]
-    paths:
-      - 'src/backend/**'
+    branches: [main]          # ← Nur noch diese Zeile!
   workflow_dispatch:
 
 jobs:
