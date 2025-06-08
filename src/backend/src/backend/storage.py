@@ -116,7 +116,10 @@ def get_statistics() -> Stats:
         sessions_by_tag=sessions_by_tag,
     )
 
-    logger.info(f"Stats: {total_minutes}min across {len(sessions)} sessions")
+    logger.info(
+        f"Calculated statistics: {total_minutes} minutes "
+        f"across {len(sessions)} sessions"
+    )
     return stats
 
 
