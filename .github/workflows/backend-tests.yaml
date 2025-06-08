@@ -2,6 +2,14 @@ name: Backend Tests
 
 on:
   pull_request:
+    paths:
+      - 'src/backend/**'
+      - '.github/workflows/backend-tests.yaml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/backend/**'
+  workflow_dispatch:
 
 jobs:
   check_paths:
@@ -15,7 +23,7 @@ jobs:
         with:
           filters: |
             backend:
-              - 'src/backend/**'               # ✅ Korrekt für dein repo
+              - 'src/backend/**'
               - '.github/workflows/backend-tests.yaml'
 
   test:
@@ -25,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./src/backend      # ✅ Korrekt für dein repo
+        working-directory: ./src/backend
 
     steps:
       - name: Checkout code
@@ -35,13 +43,34 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Set up Python
-        run: uv python install
+        run: uv python install 3.12
 
       - name: Install dependencies
         run: |
-          uv sync --group dev                 # ✅ Modern dependency groups
+          uv sync --group dev
+
+      - name: Debug - Check installation
+        run: |
+          pwd
+          ls -la
+          echo "Python version: $(uv run python --version)"
+          echo "Ruff version: $(uv run --group dev ruff --version)"
 
       - name: Lint with Ruff
         run: |
           uv run --group dev ruff check --output-format=github --target-version=py312 src tests
           uv run --group dev ruff format --diff --check --target-version=py312 src tests
+
+      - name: Run Tests (Optional)
+        run: |
+          uv run --group dev pytest tests/ -v --cov=src --cov-report=xml
+        continue-on-error: true  # Tests can fail, workflow continues
+
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          file: ./src/backend/coverage.xml
+          directory: ./src/backend
+          fail_ci_if_error: false
+####
