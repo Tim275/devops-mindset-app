@@ -55,16 +55,17 @@ jobs:
           ls -la
           echo "Python version: $(uv run python --version)"
           echo "Ruff version: $(uv run --group dev ruff --version)"
+          echo "Pytest version: $(uv run --group dev pytest --version)"
 
       - name: Lint with Ruff
         run: |
           uv run --group dev ruff check --output-format=github --target-version=py312 src tests
           uv run --group dev ruff format --diff --check --target-version=py312 src tests
 
-      - name: Run Tests (Optional)
+      - name: Run tests with coverage
         run: |
-          uv run --group dev pytest tests/ -v --cov=src --cov-report=xml
-        continue-on-error: true  # Tests can fail, workflow continues
+          uv run --group dev pytest tests/ -v --cov=src --cov-report=xml --cov-report=term-missing
+        # Note: Removed continue-on-error to make tests mandatory for pipeline success
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
@@ -73,4 +74,10 @@ jobs:
           file: ./src/backend/coverage.xml
           directory: ./src/backend
           fail_ci_if_error: false
-####
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "🧪 Test execution completed"
+          echo "📊 Coverage report generated"
+          echo "✅ All backend validations finished"
