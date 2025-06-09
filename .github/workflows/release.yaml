@@ -1,7 +1,7 @@
 name: Release Please
 
 on:
-  push:
+  push:   ## triggert bei push auf main, oder wenn was gemerged wird (für release oder nach anpssungen forntend/backend)
     branches:
       - main
 
