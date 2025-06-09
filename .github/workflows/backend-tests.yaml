@@ -1,7 +1,7 @@
 name: Backend Tests
 
 on:
-  pull_request:
+  pull_request:  ### triggert nur bei pull requests !
     paths:
       - 'src/backend/**'
       - '.github/workflows/backend-tests.yaml'
