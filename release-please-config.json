@@ -1,18 +1,18 @@
 {
-    "packages": {
-      "src/backend": {
-        "release-type": "python",
-        "package-name": "study-tracker-backend",
-        "component": "backend",
-        "include-component-in-tag": true,
-        "changelog-path": "CHANGELOG.md",
-        "extra-files": [
-          {
-            "type": "toml",
-            "path": "src/backend/uv.lock",
-            "jsonpath": "$.package[?(@.name.value=='study-tracker-backend')].version"
-          }
-        ]
-      }
+  "packages": {
+    "devops-projekt/src/backend": {
+      "release-type": "python",
+      "package-name": "study-tracker-backend",
+      "component": "backend",
+      "include-component-in-tag": true,
+      "changelog-path": "devops-projekt/CHANGELOG.md",
+      "extra-files": [
+        {
+          "type": "toml",
+          "path": "devops-projekt/src/backend/uv.lock",
+          "jsonpath": "$.package[?(@.name.value=='study-tracker-backend')].version"
+        }
+      ]
     }
   }
+}
