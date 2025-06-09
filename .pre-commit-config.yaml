@@ -1,7 +1,6 @@
-# .pre-commit-config.yaml
 repos:
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v1.17.0
+    rev: v3.29.1  
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -9,7 +8,9 @@ repos:
     rev: v0.11.7
     hooks:
       - id: ruff
+        args: [--fix]  # ← Add auto-fix
       - id: ruff-format
+
 
 
       #### cz commit

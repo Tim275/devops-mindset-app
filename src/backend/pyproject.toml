@@ -1,9 +1,9 @@
 [project]
 name = "study-tracker-backend"
-version = "0.2.1"
+version = "0.13.1"  # ← Note: Update this version when making changes ( see release json)
 description = "Backend API for tracking study time for DevOps certifications"
 readme = "README.md"
-authors = [{ name = "Tim", email = "tim@example.com" }]
+authors = [{ name = "Timour", email = "timour.miagol@outlook.de" }]
 requires-python = ">=3.12"
 dependencies = ["fastapi>=0.115.12", "httpx>=0.28.1", "uvicorn>=0.34.2"]
 

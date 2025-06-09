@@ -5,7 +5,7 @@ ruff = "latest"                    # Code quality
 pre-commit = "latest"              # Automated quality gates
 gh = "latest"                      # GitHub CLI
 trivy = "latest"                  # Security scanning
-### commitizen ist nciht verfügbar über mise, daher wird es nicht installiert !
+###  ! Note: commitizen is not available via mise, hence it is not installed, so write a script for it
 
 
 [env]
