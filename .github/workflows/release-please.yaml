@@ -4,22 +4,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'devops-projekt/**'
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: googleapis/release-please-action@v4 ### lädt google apis release-please-action
-        # This action is used to automate the release process for a project.
-        # It generates release notes, updates version numbers, and creates GitHub releases.
-        # It is configured to run on pushes to the main branch.
-        # The action will use the provided configuration file and manifest file to determine how to create the release.
-        # The action will use the provided token to authenticate with GitHub.
-        # The token is expected to be stored in the repository secrets as DEVOPS_STUDY_APP.
+      - uses: actions/checkout@v4
+
+      - uses: googleapis/release-please-action@v4
         id: release
         with:
-          # Will not trigger other workflows when using GITHUB_TOKEN
-          # token: ${{ secrets.GITHUB_TOKEN }}
           token: "${{ secrets.DEVOPS_STUDY_APP }}"
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
