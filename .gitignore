@@ -57,3 +57,37 @@ Thumbs.db
 # Project specific
 src/backend/data/sessions.csv
 *.log
+
+# === DevOps Projekt Specific ===
+# Root level unwanted files
+__init__.py
+main.cpython-*.pyc
+
+# Development artifacts
+.devcontainer/.venv/
+start-container.sh.log
+mise-install.log
+*.tar
+.docker-cache/
+*.lock.bak
+uv.lock~
+htmlcov/
+.coverage
+coverage.json
+
+# Local development data
+src/backend/data/*.csv.bak
+src/backend/data/test_*.csv
+src/frontend/temp/
+src/frontend/cache/
+
+# Script artifacts
+scripts/*.log
+scripts/temp/
+scripts/.cache/
+
+# Local configs
+config.local.json
+.env.local
+.env.development.local
+.env.production.local
