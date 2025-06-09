@@ -63,6 +63,20 @@ jobs:
         run: |
           uv run pytest tests/ -v --cov=src --cov-report=xml --cov-report=term-missing
 
+      - name: Build Docker image
+        run: docker build -t backend-app:latest .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.30.0
+        with:
+          image-ref: "backend-app:latest"
+          format: "table"
+          exit-code: "0"
+          # exit-code: '1' # Fail the workflow if vulnerabilities are found.
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
         if: always()
