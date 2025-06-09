@@ -4,16 +4,27 @@ services:
       context: ./src/backend
       dockerfile: Dockerfile
     ports:
-      - "22112:22112"
+      - "22112:22112"   ## ports statt netzwerk !
     volumes:
       - ./src/backend/data/:/app/data
     environment:
       - DATA_DIR=/app/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:22112/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+    user: "1000:1000"
+    # === PRODUCTION FEATURES (currently disabled for simplicity) ===
+    # healthcheck:
+    #   test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:22112/health')"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 30s
+    # networks:
+    #   - devops-net
+    # restart: unless-stopped
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '0.5'
+    #       memory: 256M
 
   frontend:
     build:
@@ -23,16 +34,35 @@ services:
       - "22111:22111"
     environment:
       - API_URL=http://backend:22112
-      - PORT=22111
     depends_on:
-      backend:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:22111/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - backend  # Simple dependency - no health check waiting for frontend
+    user: "1000:1000"
+    # === PRODUCTION FEATURES (currently disabled for simplicity) ===
+    # healthcheck:
+    #   test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:22111/health')"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 30s
+    # depends_on:
+    #   backend:
+    #     condition: service_healthy  # Wait for backend to be fully ready
+    # networks:
+    #   - devops-net
+    # restart: unless-stopped
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '0.3'
+    #       memory: 128M
 
-networks:
-  default:
-    name: devops-net
+# === PRODUCTION NETWORK (currently disabled) ===
+# networks:
+#   devops-net:
+#     driver: bridge
+#     name: devops-study-tracker
+
+# === PRODUCTION VOLUMES (for data persistence) ===
+# volumes:
+#   backend-data:
+#     driver: local
