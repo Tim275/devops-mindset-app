@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.18.1](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.18.0...backend-v0.18.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* **uv-lock-fix:** uv lock was buggy thats the reason i couldnt update docker image ([dea4c73](https://github.com/Tim275/devops-mindset-app/commit/dea4c73ac647c9874b1194dc051d6bbbd0225498))
+* **uv-lock-fix:** uv lock was buggy thats the reason i couldnt update… ([cabf939](https://github.com/Tim275/devops-mindset-app/commit/cabf9391267619b2cb7f9779ebd0b1a81cb453c0))
+
 ## [0.18.0](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.17.0...backend-v0.18.0) (2025-06-10)
 
 
