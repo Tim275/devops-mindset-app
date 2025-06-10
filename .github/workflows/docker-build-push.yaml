@@ -1,15 +1,11 @@
 name: Build and Push Docker Images
-
 on:
   push:
     tags:
       - "backend*"
-  workflow_dispatch:                   # ✅ Manual trigger hinzugefügt
-
 env:
   REGISTRY: ghcr.io
   BACKEND_IMAGE_NAME: ${{ github.repository_owner }}/study-app-api
-
 jobs:
   build-and-push-backend:
     name: Build and Push Backend
@@ -19,7 +15,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -43,7 +38,6 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ steps.tag.outputs.TAG }}
             ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:latest
-            
     outputs:
       tag: ${{ steps.tag.outputs.TAG }}
       app: backend
