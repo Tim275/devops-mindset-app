@@ -1,12 +1,10 @@
 name: Backend Tests
 
 on:
-  pull_request:  ### triggert nur bei pull requests !
+  pull_request:
     paths:
       - 'src/backend/**'
       - '.github/workflows/backend-tests.yaml'
-  push:
-    branches: [main]          # ← Nur noch diese Zeile!
   workflow_dispatch:
 
 jobs:
@@ -44,15 +42,7 @@ jobs:
         run: uv python install 3.12
 
       - name: Install dependencies
-        run: |
-          uv sync --group dev
-
-      - name: Debug - Check installation
-        run: |
-          pwd
-          ls -la
-          echo "Python version: $(uv run python --version)"
-          echo "Ruff version: $(uv run --group dev ruff --version)"
+        run: uv sync --group dev
 
       - name: Lint with Ruff
         run: |
@@ -72,7 +62,6 @@ jobs:
           image-ref: "backend-app:latest"
           format: "table"
           exit-code: "0"
-          # exit-code: '1' # Fail the workflow if vulnerabilities are found.
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
