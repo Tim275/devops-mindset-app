@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.15.0...backend-v0.16.0) (2025-06-10)
+
+
+### Features
+
+* **backend:** b odc ([45b32c7](https://github.com/Tim275/devops-mindset-app/commit/45b32c73dd3ab53804c255f4fed3f17049c8069c))
+
 ## [0.15.0](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.14.0...backend-v0.15.0) (2025-06-10)
 
 
