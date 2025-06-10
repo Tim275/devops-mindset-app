@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.15.0](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.14.0...backend-v0.15.0) (2025-06-10)
+
+
+### Features
+
+* **backend:** add Docker build test documentation ([cdd3756](https://github.com/Tim275/devops-mindset-app/commit/cdd37560dc3afce5ddec44ade63261dafa2a977a))
+* **new-comment:** for testing purpuses ([f4e283c](https://github.com/Tim275/devops-mindset-app/commit/f4e283cfdec4cd9122df5513e9122de6f6032a96))
+* **new-comment:** for testing purpuses ([51f7d7e](https://github.com/Tim275/devops-mindset-app/commit/51f7d7e3378091b659335410d51be8fe2375ef90))
+
+
+### Bug Fixes
+
+* **docker-compose:** docker compsoe change ([73f9a60](https://github.com/Tim275/devops-mindset-app/commit/73f9a6046a8c9703ddc6024c45c7bac5ddf14ede))
+
 ## [0.14.0](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.13.1...backend-v0.14.0) (2025-06-09)
 
 
