@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.1](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.19.0...backend-v0.19.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* **123:** 2132 ([750a2f6](https://github.com/Tim275/devops-mindset-app/commit/750a2f6bf3103eaaeba2964c30ec05d910c31409))
+
 ## [0.19.0](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.18.1...backend-v0.19.0) (2025-06-10)
 
 
