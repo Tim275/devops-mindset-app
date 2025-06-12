@@ -1,11 +1,6 @@
 [project]
-feature/frontend-backend-integration
 name = "study-tracker-frontend"
-version = "0.3.0"
-
-
-
-
+version = "0.3.1"
 
 description = "Frontend for DevOps Study Tracker application"
 readme = "README.md"
