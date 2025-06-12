@@ -1,6 +1,8 @@
 [project]
+feature/frontend-backend-integration
 name = "study-tracker-frontend"
 version = "0.3.0"
+
 
 
 
