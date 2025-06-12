@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.4.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.3.1...frontend-v0.4.0) (2025-06-12)
+
+
+### Features
+
+* **2:** 2 ([919b5e2](https://github.com/Tim275/devops-mindset-app/commit/919b5e27e409058a9c273fb3e600b79b7fe9e83c))
+* **2:** 2 ([763c5e8](https://github.com/Tim275/devops-mindset-app/commit/763c5e8b94fb101e741294bc8e86e3ce151087a1))
+
+
+### Bug Fixes
+
+* **3:** 3 ([cbdfdf0](https://github.com/Tim275/devops-mindset-app/commit/cbdfdf027ef285a07adea057e143953fe2879bdd))
+* **uv-lock-fix:** s ([2dbb916](https://github.com/Tim275/devops-mindset-app/commit/2dbb916a765ad7264faa29ddc20b11b5fe6c7ad4))
+* **uv-lock-fix:** s ([050ea0c](https://github.com/Tim275/devops-mindset-app/commit/050ea0c27dc901fece571f7cf445ef4188ae30da))
+
 ## [0.3.1](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.3.0...frontend-v0.3.1) (2025-06-12)
 
 
