@@ -2,6 +2,12 @@ name: Frontend Tests
 
 on:
   pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   check_paths:
@@ -39,7 +45,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv sync --locked --dev
+          uv sync --dev
 
       - name: Lint with Ruff
         run: |
@@ -49,14 +55,6 @@ jobs:
       - name: Run tests with coverage
         run: |
           uv run pytest tests/ -v --cov=src/frontend --cov-report=xml --cov-fail-under=80
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-coverage-report
-          path: ./src/frontend/coverage.xml
-          retention-days: 7
-        if: ${{ always() }}
 
       - name: Build Docker image
         run: docker build -t frontend-app:latest .
