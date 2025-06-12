@@ -2,10 +2,12 @@ name: Backend Tests
 
 on:
   pull_request:
-    paths:
-      - 'src/backend/**'
-      - '.github/workflows/backend-tests.yaml'
-  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   check_paths:
@@ -39,19 +41,20 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Set up Python
-        run: uv python install 3.12
+        run: uv python install
 
       - name: Install dependencies
-        run: uv sync --group dev
+        run: |
+          uv sync --dev
 
       - name: Lint with Ruff
         run: |
-          uv run --group dev ruff check --output-format=github --target-version=py312 src tests
-          uv run --group dev ruff format --diff --check --target-version=py312 src tests
+          uv run ruff check --output-format=github --target-version=py312 src tests
+          uv run ruff format --diff --check --target-version=py312 src tests
 
       - name: Run tests with coverage
         run: |
-          uv run pytest tests/ -v --cov=src --cov-report=xml --cov-report=term-missing
+          uv run pytest tests/ -v --cov=src/backend --cov-report=xml --cov-fail-under=80
 
       - name: Build Docker image
         run: docker build -t backend-app:latest .
@@ -65,11 +68,3 @@ jobs:
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
-
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v4
-        if: always()
-        with:
-          file: ./src/backend/coverage.xml
-          directory: ./src/backend
-          fail_ci_if_error: false
