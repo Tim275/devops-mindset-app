@@ -59,7 +59,7 @@ def add_session():
         except (ValueError, TypeError):
             return redirect(url_for("index"))
 
-        # Prepare data for backend
+        # Prepare data ###for backend
         session_data = {"minutes": minutes, "tag": tag if tag else "General Study"}
 
         # Send to backend
