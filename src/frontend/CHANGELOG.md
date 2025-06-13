@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.4.0...frontend-v0.5.0) (2025-06-13)
+
+
+### Features
+
+* **now:** no ([b1e3c6b](https://github.com/Tim275/devops-mindset-app/commit/b1e3c6bdc6a14368305cff7f134e306af194aeb3))
+* **now:** no ([61930d5](https://github.com/Tim275/devops-mindset-app/commit/61930d5e2ff98689e2cc9f7530e11620f49b01d5))
+
 ## [0.4.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.3.0...frontend-v0.4.0) (2025-06-13)
 
 
