@@ -117,3 +117,7 @@ config.local.json
 **/.pytest_cache/
 **/.mypy_cache/
 **/.tox/
+
+
+main-ruleset.json
+# Local environment files
