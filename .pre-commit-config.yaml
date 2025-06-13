@@ -1,0 +1,24 @@
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v1.17.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.7
+    hooks:
+      - id: ruff
+      - id: ruff-format
+
+
+      #### cz commit
+# 1. Lass ruff alle Probleme automatisch fixen
+#ruff check --fix src/
+
+# 2. Auto-format nochmal
+#ruff format src/
+
+# 3. Check ob alles clean ist
+#ruff check src/
+      

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: devops-backend
+    ports:
+      - "22112:22112"
+    environment:
+      - ENVIRONMENT=development
+      - PORT=22112
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:22112/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./src/frontend  
+      dockerfile: Dockerfile
+    container_name: devops-frontend
+    ports:
+      - "22111:22111"
+    environment:
+      - BACKEND_URL=http://backend:22112
+      - ENVIRONMENT=development
+      - PORT=22111
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:22111/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+networks:
+  default:
+    name: devops-network

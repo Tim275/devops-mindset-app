@@ -1,0 +1,18 @@
+[tools]
+python = "3.12"                    # Consistent Python version
+uv = "latest"                      # Modern package management
+ruff = "latest"                    # Code quality
+pre-commit = "latest"              # Automated quality gates
+gh = "latest"                      # GitHub CLI
+trivy = "latest"                  # Security scanning
+### commitizen ist nciht verfügbar über mise, daher wird es nicht installiert !
+
+
+[env]
+APP_REPO = 'devops-projekt'
+GH_REPO = 'devops-projekt'
+
+
+[settings]
+experimental = true
+idiomatic_version_file_enable_tools = ["python"]
