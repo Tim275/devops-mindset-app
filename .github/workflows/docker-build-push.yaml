@@ -7,8 +7,8 @@ on:
       - "frontend*"
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE_NAME: tim275/study-app-api
-  FRONTEND_IMAGE_NAME: tim275/study-app-web
+  BACKEND_IMAGE_NAME: tim275/study-app-backend
+  FRONTEND_IMAGE_NAME: tim275/study-app-frontend
 
 jobs:
   build-and-push-backend:
