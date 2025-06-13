@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-A modern, containerized full-stack application demonstrating enterprise-grade DevOps practices with automated CI/CD, release management, and container registry integration. This project serves as a **DevOps masterclass** showcasing cutting-edge technologies like **uv** (ultra-fast Python package manager), **mise** (tool version management), **Release Please** (automated versioning), and **multi-stage Docker optimization**.
+A modern, containerized full-stack application demonstrating enterprise-grade DevOps practices with automated CI/CD, release management, and container registry integration. This project serves as a **DevOps masterclass** showcasing cutting-edge technologies like **uv** (ultra-fast Python package manager), **mise** (tool version management), **Release Please** (automated versioning), **DevContainer environments**, **Commitizen workflow automation**, **GitHub Container Registry (GHCR)**, and **Trivy security scanning** with **branch protection enforcement**.
 
 ## 🚀 Quick Start
 
@@ -10,34 +10,15 @@ A modern, containerized full-stack application demonstrating enterprise-grade De
 # Start complete development environment
 ./start-container.sh
 
-# Inside container - setup and run
-./scripts/extendet_setup
-./scripts/start_modern_local
-
 # Services available at:
 # Backend:  http://localhost:22112
 # Frontend: http://localhost:22111
 ```
 
-## 🏗️ Architecture
-
-```
-devops-projekt/
-├── 🐳 .devcontainer/              # Portable development environment
-├── 📦 src/backend|frontend/       # 🚀 FastAPI & 🌐 Flask packages
-│   ├── pyproject.toml             # Package definition + dependencies  
-│   ├── uv.lock                   # Exact dependency versions
-│   └── Dockerfile                # Multi-stage production container
-├── 🔧 mise.toml                  # Tool version management
-├── 🚀 scripts/                   # Development automation
-├── 🤖 .github/workflows/         # CI/CD automation
-└── 📋 release-please-*.json      # Release automation config
-```
-
 ## 🛠️ Key Technologies
 
 ### **🐳 DevContainer + 🔧 mise.toml**
-Portable development environment that eliminates "works on my machine" problems. The `mise.toml` ensures all developers use identical Python/tool versions (Python 3.12, uv, ruff, pre-commit).
+Portable development environment that eliminates "works on my machine" problems. The `mise.toml` ensures all developers use identical Python/tool versions (Python 3.13, uv, ruff, pre-commit).
 
 ### **🐍 Modern Python Stack**
 - **uv**: Ultra-fast package manager (10-100x faster than pip)
@@ -48,63 +29,75 @@ Portable development environment that eliminates "works on my machine" problems.
 ### **Integration Workflow:**
 ```bash
 mise install        # Consistent tool versions
-uv sync            # Dependency management  
+uv sync --locked    # Exact dependency management  
 uv run app         # Managed execution
+```
+
+## 🔒 Development Workflow
+
+Enterprise-grade development with protected main branch:
+
+```bash
+# 1. Create feature branch
+git checkout -b feature/new-functionality
+
+# 2. Commit with conventional commits
+cz commit  # Interactive commit tool
+
+# 3. Push and create PR
+git push origin feature/new-functionality
+
+# 4. Automated checks: Tests, Security, Code Quality
+# 5. After approval → Merge → Release Please creates release PR
+```
+
+## 🔒 Dependency Management with uv.lock
+
+**Critical for CI/CD success:** `--locked` flag ensures **100% reproducible builds**.
+
+```bash
+# ⚠️ ALWAYS run after code changes:
+cd src/frontend && uv lock && cd ../..
+cd src/backend && uv lock && cd ../..
 ```
 
 ## 📝 Quality & Automation
 
-### **Conventional Commits with Commitizen**
-Interactive commit tool (`cz commit`) enforcing structured messages:
-- `feat:` → Minor version bump + changelog entry
+### **Conventional Commits + Release Please**
+- `feat:` → Minor version bump + changelog
 - `fix:` → Patch version bump  
-- `feat!:` → Major version bump (breaking changes)
-
-### **Release Please Integration**
-Automated release management analyzing conventional commits:
-- 🏷️ Smart semantic version tagging
-- 📝 Auto-generated CHANGELOG.md
-- 🚀 GitHub releases with deployment artifacts
-
-## 🏃‍♂️ Development Options
-
-```bash
-# Container Development (Recommended)
-./start-container.sh && ./scripts/extendet_setup && ./scripts/start_modern_local
-
-# Local Development  
-mise install && ./scripts/extendet_setup
-cd src/backend && uv run study-tracker-api
-cd src/frontend && uv run study-tracker-frontend
-
-# Production Testing
-./scripts/build_modern_containers && ./scripts/docker_compose_manager up
-```
+- `feat!:` → Major version bump
+- 🏷️ Automated semantic versioning + GitHub releases
 
 ## 🤖 CI/CD Pipeline
 
-**Enterprise-grade automation:**
+**Enterprise automation:**
 - **Release Please**: Automated semantic versioning
-- **Container Registry**: GitHub Container Registry (GHCR) integration
-- **Quality Gates**: Trivy security scanning, automated testing
-- **Multi-stage Docker**: Optimized containers (800MB → 80MB)
+- **GHCR**: GitHub Container Registry integration
+- **Trivy**: Security scanning
+- **Multi-stage Docker**: 800MB → 80MB optimization
 
-**Release Flow:** `feat: commit` → Release PR → Git tag → Container build → Production ready
+**Flow:** `feat: commit` → Release PR → Git tag → Container build → Production ready
 
-## 📊 Production Ready
+## 🚀 Production Deployment
 
-- **Latest Release**: `backend-v0.19.0` (automated versioning)
-- **Production Images**: `ghcr.io/tim275/study-app-api:latest`
-- **API Endpoints**: FastAPI (22112) + Flask (22111) with health checks
-- **Deployment**: ✅ Kubernetes-ready containers
+```bash
+# Production containers
+docker run -p 22111:22111 ghcr.io/tim275/study-app-web:latest
+docker run -p 22112:22112 ghcr.io/tim275/study-app-api:latest
+```
 
-## 🎯 Key Achievements
+**Release Strategy:**
+- Automated tagging: `frontend-v0.4.0`, `backend-v0.19.1`
+- Security-hardened Alpine images
+- Built-in health checks
+
+## 📊 Key Achievements
 
 **Modern Technology Adoption:**
 - **uv**: 10-100x faster Python package management
 - **mise**: Universal tool version management
-- **Release Please**: Automated semantic versioning
-- **Multi-stage Docker**: Security-hardened optimization
+- **DevContainer**: Zero-setup development environment
 
 **DevOps Excellence:**
 - 🤖 85% reduction in release cycle time
@@ -114,10 +107,10 @@ cd src/frontend && uv run study-tracker-frontend
 
 ## 🚀 Future Roadmap
 
-- 🔄 **GitOps with Flux**: Declarative Git-driven deployments
-- ☸️ **Kubernetes**: Production-grade K8s manifests with Helm
+- ☸️ **Kubernetes**: Production-grade manifests with Helm
+- 🔄 **GitOps**: Declarative deployments with Flux
 - 📊 **Observability**: Prometheus, Grafana, distributed tracing
 
 ---
 
-**🏆 Modern DevOps masterclass demonstrating cutting-edge technologies and enterprise patterns**###
+**🏆 Modern DevOps masterclass demonstrating cutting-edge technologies and enterprise patterns**
