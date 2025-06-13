@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.3.0...frontend-v0.4.0) (2025-06-13)
+
+
+### Features
+
+* **delte-fnction-pls-fix-docker-build:** d ([cbf3c2e](https://github.com/Tim275/devops-mindset-app/commit/cbf3c2e86a2f4380ebcefffac3e5d5d59cfd0727))
+* **delte-fnction-pls-fix-docker-build:** d ([8d3c283](https://github.com/Tim275/devops-mindset-app/commit/8d3c283beac6a14424a7576c30b88c798900f762))
+
 ## [0.3.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.2.0...frontend-v0.3.0) (2025-06-13)
 
 
