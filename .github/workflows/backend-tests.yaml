@@ -2,8 +2,6 @@ name: Backend Tests
 
 on:
   pull_request:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
@@ -45,16 +43,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv sync --dev
+          uv sync --locked --dev
 
       - name: Lint with Ruff
         run: |
-          uv run ruff check --output-format=github --target-version=py312 src tests
-          uv run ruff format --diff --check --target-version=py312 src tests
+          uv run ruff check --output-format=github --target-version=py313 src tests
+          uv run ruff format --diff --check --target-version=py313 src tests
 
       - name: Run tests with coverage
         run: |
-          uv run pytest tests/ -v --cov=src/backend --cov-report=xml --cov-fail-under=70
+          uv run pytest tests/ -v --cov=src/backend --cov-report=xml --cov-fail-under=80
 
       - name: Build Docker image
         run: docker build -t backend-app:latest .
