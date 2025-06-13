@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.2](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.19.1...backend-v0.19.2) (2025-06-13)
+
+
+### Documentation
+
+* **gitignore-changes:** gitignore ([f811909](https://github.com/Tim275/devops-mindset-app/commit/f811909d2445edcfa790267114f9baef44be2899))
+
 ## [0.19.1](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.19.0...backend-v0.19.1) (2025-06-12)
 
 
