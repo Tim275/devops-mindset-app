@@ -1,7 +1,0 @@
-#!/bin/bash
-echo "🚀 Starting Frontend on Port 22111..."
-eval "$(mise activate bash)"
-
-# Use monorepo structure (working)
-cd src/frontend
-python main.py

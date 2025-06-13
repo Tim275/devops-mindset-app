@@ -1,0 +1,24 @@
+# scripts/safe_commit
+#!/bin/bash
+echo "🔄 Safe commit workflow..."
+
+# Check versions
+MANIFEST_VERSION=$(cat .release-please-manifest.json | grep frontend | cut -d'"' -f4)
+PYPROJECT_VERSION=$(cat src/frontend/pyproject.toml | grep "version = " | cut -d'"' -f2)
+
+echo "📊 Manifest version: $MANIFEST_VERSION"
+echo "📊 Pyproject version: $PYPROJECT_VERSION"
+
+if [ "$MANIFEST_VERSION" != "$PYPROJECT_VERSION" ]; then
+    echo "⚠️  Versions don't match! Please fix manually."
+    exit 1
+fi
+
+# Update lock file
+echo "🔒 Updating lock file..."
+cd src/frontend && uv lock && cd ../..
+
+# Commit
+echo "✅ Ready to commit!"
+git add .
+cz commit

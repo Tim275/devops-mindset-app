@@ -1,7 +1,0 @@
-#!/bin/bash
-echo "🚀 Starting Backend on Port 22112..."
-eval "$(mise activate bash)"
-
-# Use monorepo structure (working)
-cd src/backend
-python main.py
