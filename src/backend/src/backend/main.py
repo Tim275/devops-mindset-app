@@ -15,7 +15,13 @@ from .config import (
     CORS_ALLOW_ORIGINS,
 )
 from .models import Stats, StudySession, StudySessionCreate
-from .storage import get_all_sessions, get_sessions_by_tag, get_statistics, save_session
+from .storage import (
+    delete_session_by_id,
+    get_all_sessions,
+    get_sessions_by_tag,
+    get_statistics,
+    save_session,
+)
 
 # Configure logging
 logging.basicConfig(
@@ -84,6 +90,25 @@ async def read_sessions(
         )
 
 
+@app.delete("/sessions/{session_id}")
+async def delete_session(session_id: str):
+    """Delete a study session by ID"""
+    logger.info(f"Deleting session with ID: {session_id}")
+    try:
+        result = delete_session_by_id(session_id)
+        if result:
+            logger.info(f"Session {session_id} deleted successfully")
+            return {"message": "Session deleted successfully"}
+        else:
+            logger.warning(f"Session {session_id} not found")
+            raise HTTPException(status_code=404, detail="Session not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting session {session_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deleting session: {str(e)}")
+
+
 @app.get("/stats", response_model=Stats)
 async def read_stats():
     """Get aggregated statistics about study sessions"""
@@ -116,22 +141,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-@app.delete("/sessions/{session_id}")
-async def delete_session(session_id: str):
-    """Delete a study session by ID"""
-    logger.info(f"Deleting session with ID: {session_id}")
-    try:
-        from .storage import delete_session_by_id
-
-        result = delete_session_by_id(session_id)
-        if result:
-            logger.info(f"Session {session_id} deleted successfully")
-            return {"message": "Session deleted successfully"}
-        else:
-            logger.warning(f"Session {session_id} not found")
-            raise HTTPException(status_code=404, detail="Session not found")
-    except Exception as e:
-        logger.error(f"Error deleting session {session_id}: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error deleting session: {str(e)}")

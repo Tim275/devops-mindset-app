@@ -37,7 +37,8 @@ def index():
             sessions.sort(key=lambda x: x["timestamp_obj"], reverse=True)
         else:
             sessions = []
-    except requests.RequestException:
+    except requests.RequestException as e:
+        logger.error(f"Error fetching sessions: {e}")
         sessions = []
 
     return render_template("index.html", sessions=sessions)
@@ -57,24 +58,66 @@ def add_session():
             if minutes <= 0:
                 raise ValueError("Minutes must be positive")
         except (ValueError, TypeError):
+            logger.error(f"Invalid duration: {duration}")
             return redirect(url_for("index"))
 
-        # Prepare data ###for backend
+        # Prepare data for backend
         session_data = {"minutes": minutes, "tag": tag if tag else "General Study"}
 
         # Send to backend
-        requests.post(
+        response = requests.post(
             f"{API_URL}/sessions",
             json=session_data,
             timeout=5,
             headers={"Content-Type": "application/json"},
         )
 
+        if response.status_code == 200:
+            logger.info(f"Session created successfully: {session_data}")
+        else:
+            logger.warning(f"Failed to create session: {response.status_code}")
+
         return redirect(url_for("index"))
 
     except Exception as e:
         logger.error(f"Error in add_session: {e}")
         return redirect(url_for("index"))
+
+
+@app.route("/delete_session/<session_id>", methods=["POST"])
+def delete_session(session_id):
+    """Delete a study session via backend API"""
+    logger.info("=== DELETE SESSION ROUTE TRIGGERED ===")
+    logger.info(f"Session ID to delete: {session_id}")
+    logger.info(f"Request method: {request.method}")
+    logger.info(f"API URL: {API_URL}")
+
+    try:
+        # Call backend DELETE endpoint
+        delete_url = f"{API_URL}/sessions/{session_id}"
+        logger.info(f"Making DELETE request to: {delete_url}")
+
+        response = requests.delete(delete_url, timeout=10)
+
+        logger.info(f"Backend response status: {response.status_code}")
+        logger.info(f"Backend response text: {response.text}")
+
+        if response.status_code == 200:
+            logger.info(f"Session {session_id} deleted successfully")
+        elif response.status_code == 404:
+            logger.warning(f"Session {session_id} not found in backend")
+        else:
+            logger.warning(
+                f"Failed to delete session {session_id}: {response.status_code}"
+            )
+
+    except requests.RequestException as e:
+        logger.error(f"Network error deleting session {session_id}: {e}")
+    except Exception as e:
+        logger.error(f"Unexpected error deleting session {session_id}: {e}")
+
+    logger.info("=== REDIRECTING TO INDEX ===")
+    return redirect(url_for("index"))
 
 
 @app.route("/health")
@@ -93,7 +136,24 @@ def health():
         return jsonify({"status": "unhealthy", "api_connectivity": False}), 503
 
 
+def debug_routes():
+    """Debug function to list all registered routes"""
+    logger.info("=== REGISTERED FLASK ROUTES ===")
+    for rule in app.url_map.iter_rules():
+        logger.info(
+            f"Route: {rule.rule} | Methods: {rule.methods} | Endpoint: {rule.endpoint}"
+        )
+    logger.info("=== END ROUTES ===")
+
+
 def main():
+    """Main entry point"""
+    logger.info("Starting Flask application...")
+    logger.info(f"API URL: {API_URL}")
+
+    # Debug routes
+    debug_routes()
+
     app.run(host="0.0.0.0", port=22111, debug=True)
 
 
