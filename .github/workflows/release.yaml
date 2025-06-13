@@ -1,7 +1,7 @@
 name: Release Please
 
 on:
-  push:   ## triggert bei push auf main, oder wenn was gemerged wird (für release oder nach anpssungen forntend/backend)
+  push:
     branches:
       - main
 
@@ -12,8 +12,6 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          # Will not trigger other workflows when using GITHUB_TOKEN
-          # token: ${{ secrets.GITHUB_TOKEN }}
           token: "${{ secrets.DEVOPS_STUDY_APP }}"
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
