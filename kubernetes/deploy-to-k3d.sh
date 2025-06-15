@@ -69,7 +69,7 @@ k3d image import frontend:dev -c "$CLUSTER_NAME"
 
 # Deploy with kustomize
 echo "🚀 Deploying application using kustomize..."
-kubectl apply -k "$SCRIPT_DIR/dev"
+kubectl apply -k "$SCRIPT_DIR/manifests/dev"
 
 # Wait for pods
 echo "⏳ Waiting for pods to be ready..."
