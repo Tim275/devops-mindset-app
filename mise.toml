@@ -1,18 +1,35 @@
+# mise.toml
 [tools]
-python = "3.12"                    # Consistent Python version
-uv = "latest"                      # Modern package management
-ruff = "latest"                    # Code quality
-pre-commit = "latest"              # Automated quality gates
-gh = "latest"                      # GitHub CLI
-trivy = "latest"                  # Security scanning
-### commitizen ist nciht verfügbar über mise, daher wird es nicht installiert !
-
+python = "3.13"        # 🐍 Latest Python version
+uv = "latest"          # ⚡ Ultra-fast package management (10-100x faster)
+ruff = "latest"        # 🧹 Code quality & formatting
+pre-commit = "latest"  # 🛡️ Automated quality gates
+gh = "latest"          # 🐙 GitHub CLI integration
+trivy = "latest"       # 🔍 Security vulnerability scanner
+kubectl = "latest"     # ⚓ Kubernetes CLI
+k3d = "latest"         # ☸️ Local Kubernetes clusters
+k9s = "latest"         # 📊 Kubernetes dashboard TUI
 
 [env]
 APP_REPO = 'devops-projekt'
 GH_REPO = 'devops-projekt'
 
-
 [settings]
-experimental = true
+python.uv_venv_auto = true
 idiomatic_version_file_enable_tools = ["python"]
+experimental = true
+
+[hooks]
+enter = """
+echo '🎯 DevOps Environment Ready!'
+echo ''
+echo '🔧 Tools installed: 🐍 python ⚡ uv 🐳 docker ☸️ k3d ⚓ kubectl 📊 k9s'
+echo ''
+echo '❓ What do you want to do?'
+echo '  1️⃣  Start services:     🐳 docker compose up --build'
+echo '  2️⃣  Create K8s cluster: ☸️ k3d cluster create devops-study'
+echo '  3️⃣  View cluster:       ⚓ kubectl get nodes'
+echo '  4️⃣  Open K8s dashboard: 📊 k9s'
+echo '  5️⃣  Local development:  🚀 scripts/start_modern_local'
+echo ''
+"""
