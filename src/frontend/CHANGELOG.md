@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.7.0...frontend-v0.8.0) (2025-06-15)
+
+
+### Features
+
+* enterprise-grade DevOps study tracker ([584a5f7](https://github.com/Tim275/devops-mindset-app/commit/584a5f7496d0da7270b319bd2f28fe75751969aa))
+
 ## [0.7.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.6.0...frontend-v0.7.0) (2025-06-13)
 
 
