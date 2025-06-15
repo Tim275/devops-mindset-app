@@ -19,6 +19,21 @@ python.uv_venv_auto = true
 idiomatic_version_file_enable_tools = ["python"]
 experimental = true
 
+[tasks.e2e-setup]
+description = "Setup E2E testing"
+run = """
+cd kubernetes
+uv sync
+"""
+
+[tasks.e2e-test]
+description = "Run E2E tests"
+run = """
+cd kubernetes
+uv run python e2e_test.py
+"""
+
+
 [hooks]
 enter = """
 echo '🎯 DevOps Environment Ready!'

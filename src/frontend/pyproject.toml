@@ -1,12 +1,10 @@
 [project]
 name = "study-tracker-frontend"
-version = "0.7.0"
-
+version = "0.7.0"  # Updated version
 description = "Frontend for DevOps Study Tracker application"
 readme = "README.md"
-authors = [{ name = "Your Name", email = "your.email@example.com" }]
+authors = [{ name = "Your Name", email = "your@email.com" }]
 requires-python = ">=3.13"
-
 dependencies = [
     "flask>=3.1.0",
     "requests>=2.32.3",
