@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.7.0...frontend-v0.8.0) (2025-06-16)
+
+
+### Features
+
+* enterprise-grade DevOps study tracker ([584a5f7](https://github.com/Tim275/devops-mindset-app/commit/584a5f7496d0da7270b319bd2f28fe75751969aa))
+* **implement-enterprise-E2E-testing-pipeline:** Add gh actions workf… ([94ce603](https://github.com/Tim275/devops-mindset-app/commit/94ce603338456ed83a806d63be6d418a52eb02cf))
+* **implement-enterprise-E2E-testing-pipeline:** Add gh actions workflow for end-to-end teting + e2e.py ([53bd801](https://github.com/Tim275/devops-mindset-app/commit/53bd801ad78eac0c10c754dc1b3c74420cc3a260))
+
 ## [0.7.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.6.0...frontend-v0.7.0) (2025-06-13)
 
 
