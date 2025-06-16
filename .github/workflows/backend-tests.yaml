@@ -1,9 +1,15 @@
+# .github/workflows/backend-tests.yaml
 name: Backend Tests
 
 on:
   pull_request:
-
-
+    paths:
+      - 'src/backend/**'
+      - '.github/workflows/backend-tests.yaml'
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/backend/**'
 
 jobs:
   check_paths:
@@ -64,3 +70,9 @@ jobs:
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
+
+  trigger_e2e:
+    name: Trigger E2E Tests
+    needs: test
+    if: success()
+    uses: ./.github/workflows/e2e-tests.yaml

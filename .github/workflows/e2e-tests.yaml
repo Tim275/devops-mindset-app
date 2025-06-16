@@ -1,13 +1,4 @@
-
-
-  trigger_e2e:
-    name: Trigger E2E Tests
-    needs: test
-    if: success()
-    uses: ./.github/workflows/e2e-tests.yaml
-
-
-
+# .github/workflows/e2e-tests.yaml
 name: End-to-End Tests
 
 # This workflow is triggered by other workflows, not directly from PRs
