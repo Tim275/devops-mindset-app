@@ -1,5 +1,0 @@
-#!/bin/bash
-echo "📦 Setting up Backend..."
-cd backend
-uv sync
-echo "✅ Backend ready"

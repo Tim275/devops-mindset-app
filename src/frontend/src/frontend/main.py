@@ -48,7 +48,7 @@ def index():
 def add_session():
     """Add a new study session via backend API"""
     try:
-        # Get form data (handle dddboth 'duration' annd 'minutes' field names)
+        # Get form data (handle both 'duration' annd 'minutes' field names)
         duration = request.form.get("duration") or request.form.get("minutes")
         tag = request.form.get("tag", "").strip()
 
@@ -93,7 +93,7 @@ def delete_session(session_id):
     logger.info(f"API URL: {API_URL}")
 
     try:
-        # Call backend DELETE endpoint
+        # Call backend DELETE endpoints
         delete_url = f"{API_URL}/sessions/{session_id}"
         logger.info(f"Making DELETE request to: {delete_url}")
 
