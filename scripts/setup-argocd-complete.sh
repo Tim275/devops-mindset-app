@@ -3,13 +3,13 @@
 set -e
 
 # ===================================================================
-# 🚀 DevOps GitOps Setup - ArgoCD + k3d (Complete Universal) -- MIT SSH KEY
+# 🚀 DevOps GitOps Setup - ArgoCD + k3d (Complete Universal)
 # ===================================================================
 #
 # MANUAL SETUP STEPS (if needed):
 # 1. Set Environment Variables:
 #    export DEVPOD_WORKSPACE_ID="devops-projekt"
-#    export GITUSER="your-github-username"
+#    export GITUSER="your-github-username"  
 #    export GITOPS_REPO="mindset-app-gitops"
 #
 # 2. Create SSH Keys (optional for private repo):
@@ -18,18 +18,14 @@ set -e
 #    # Add public key to GitHub repository deploy keys
 #
 # 3. Install Dependencies (if missing):
-#    # k3d:
-#    curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-#    # kubectl:
-#    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-#    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-#    # helm:
-#    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+#    # k3d: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+#    # kubectl: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+#    # helm: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 #
 # 4. Manual ArgoCD Access (if port-forward fails):
 #    kubectl port-forward svc/argocd-server -n argocd 8080:443
-#    # Username: admin
-#    # Password: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+#    # Default ArgoCD access: admin user with generated secret
+#    # Retrieve secret: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 #
 # 5. Manual Cleanup:
 #    k3d cluster delete study-app-cluster
@@ -298,12 +294,12 @@ EOL
 
 echo -e "${GREEN}✅ ArgoCD application created${NC}"
 
-# Get ArgoCD password with enhanced retry logic
-echo -e "${YELLOW}🔑 Getting ArgoCD admin password...${NC}"
-ARGOCD_PASSWORD=""
+# Retrieve ArgoCD admin token with enhanced retry logic
+echo -e "${YELLOW}🔑 Retrieving ArgoCD access token...${NC}"
+ADMIN_TOKEN=""
 for i in {1..20}; do
-    if ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" 2>/dev/null | base64 -d); then
-        if [[ -n "$ARGOCD_PASSWORD" ]]; then
+    if ADMIN_TOKEN=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" 2>/dev/null | base64 -d); then
+        if [[ -n "$ADMIN_TOKEN" ]]; then
             break
         fi
     fi
@@ -311,9 +307,9 @@ for i in {1..20}; do
     sleep 3
 done
 
-if [[ -z "$ARGOCD_PASSWORD" ]]; then
-    echo -e "${RED}❌ Failed to get ArgoCD password${NC}"
-    echo -e "${YELLOW}Manual password retrieval:${NC}"
+if [[ -z "$ADMIN_TOKEN" ]]; then
+    echo -e "${RED}❌ Failed to retrieve ArgoCD access token${NC}"
+    echo -e "${YELLOW}Manual token retrieval:${NC}"
     echo -e "${CYAN}kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d${NC}"
     exit 1
 fi
@@ -412,8 +408,8 @@ if [[ "$CONNECTION_OK" == "true" ]]; then
     echo ""
     echo -e "${CYAN}🌐 Access ArgoCD Web UI:${NC}"
     echo -e "• URL: ${WHITE}$WORKING_URL${NC}"
-    echo -e "• Username: ${WHITE}admin${NC}"
-    echo -e "• Password: ${WHITE}$ARGOCD_PASSWORD${NC}"
+    echo -e "• Account: ${WHITE}admin${NC}"
+    echo -e "• Access Token: ${WHITE}$ADMIN_TOKEN${NC}"
     echo ""
     echo -e "${CYAN}📋 Environment Variables Set:${NC}"
     echo -e "• DEVPOD_WORKSPACE_ID=${WHITE}$DEVPOD_WORKSPACE_ID${NC}"
@@ -448,7 +444,7 @@ else
     echo "2. Manual port-forward:"
     echo "   kubectl port-forward svc/argocd-server -n argocd $ARGOCD_PORT:443"
     echo "3. Open browser: https://localhost:$ARGOCD_PORT"
-    echo "4. Login: admin / $ARGOCD_PASSWORD"
+    echo "4. Access with: admin / $ADMIN_TOKEN"
     echo ""
     echo -e "${BLUE}🔍 Debug Commands:${NC}"
     echo "kubectl get pods -n argocd"
