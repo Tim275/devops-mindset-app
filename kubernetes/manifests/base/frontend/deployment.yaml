@@ -1,30 +1,30 @@
+# kubernetes/manifests/base/frontend/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
   namespace: study-app
 spec:
-  replicas: 1
+  replicas: 1                    # Ein Pod für Dev-Testing
   selector:
     matchLabels:
-      component: frontend
+      component: frontend        # Label-Selector für Service
   template:
     metadata:
       labels:
-        component: frontend
+        component: frontend      # Pod-Labels (müssen mit selector matchen)
     spec:
       containers:
         - name: frontend
-          image: frontend:latest
+          image: frontend:latest # ⚠️ Wird von Kustomize zu frontend:dev überschrieben
           ports:
-            - containerPort: 22111
+            - containerPort: 22111  # Flask-App Port (aus Dockerfile EXPOSE)
           env:
             - name: API_URL
-              value: "http://backend:22112"
-          resources:
+              value: "http://backend:22112"  # Service-zu-Service Communication
+          resources:             # Resource Limits für Production-Readiness
             limits:
-              memory: "512Mi"
+              memory: "512Mi"    # Maximaler RAM
             requests:
-              cpu: "100m"
-              memory: "128Mi"
-
+              cpu: "100m"        # 0.1 CPU core minimum
+              memory: "128Mi"    # 128MB RAM minimum

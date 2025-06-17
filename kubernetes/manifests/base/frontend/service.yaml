@@ -1,3 +1,4 @@
+# kubernetes/manifests/base/frontend/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,8 +6,9 @@ metadata:
   namespace: study-app
 spec:
   selector:
-    component: frontend
+    component: frontend         # Verbindet Service mit Deployment-Pods
   ports:
-    - port: 22111
-  type: LoadBalancer
-
+    - port: 22111              # Service Port (von außen erreichbar)
+      targetPort: 22111        # Container Port (wird automatisch gesetzt)
+  type: LoadBalancer           # ⚠️ WICHTIG: Für k3d External IP!
+                              # Ermöglicht http://172.19.0.2:22111 URLs

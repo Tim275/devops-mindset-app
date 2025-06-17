@@ -121,3 +121,23 @@ config.local.json
 
 main-ruleset.json
 # Local environment files
+
+# === Security & Credentials ===
+# SSH Keys and Deploy Keys - NEVER commit these!
+dev-keys/
+*.pem
+*.key
+*.pub
+id_rsa*
+id_ed25519*
+*.ppk
+
+# Kubernetes configs with credentials
+kubeconfig*
+.kube/config*
+
+# Environment files with secrets
+.env.secrets
+.env.production
+secrets.yaml
+secrets.json

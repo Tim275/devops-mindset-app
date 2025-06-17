@@ -48,7 +48,7 @@ def index():
 def add_session():
     """Add a new study session via backend API"""
     try:
-        # Get form data (handle dddboth 'duration' annd 'minutes' field names)
+        # Get form data (handle both 'duration' annd 'minutes' field names)
         duration = request.form.get("duration") or request.form.get("minutes")
         tag = request.form.get("tag", "").strip()
 
