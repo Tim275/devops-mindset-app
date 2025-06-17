@@ -3,12 +3,23 @@
     "context": "..",
     "dockerfile": "Dockerfile"
   },
-  "postCreateCommand": "scripts/setup",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   "forwardPorts": [
     "22111",
-    "22112"
+    "22112",
+    "8080"
+  ],
+  "portsAttributes": {
+    "8080": {
+      "label": "ArgoCD UI",
+      "requireLocalPort": true
+    }
+  },
+  "runArgs": [
+    "--memory=4g",
+    "--cpus=2",
+    "--privileged"
   ]
 }

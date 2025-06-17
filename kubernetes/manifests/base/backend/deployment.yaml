@@ -1,3 +1,4 @@
+# kubernetes/manifests/base/backend/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,9 +16,12 @@ spec:
     spec:
       containers:
         - name: backend
-          image: backend:latest
+          image: backend:latest      # ⚠️ Wird zu backend:dev überschrieben
           ports:
-            - containerPort: 22112
+            - containerPort: 22112   # FastAPI Port (aus Dockerfile)
+          env:                       # Environment für Backend
+            - name: CSV_FILE_PATH
+              value: "/app/data/sessions.csv"
           resources:
             limits:
               memory: "512Mi"
