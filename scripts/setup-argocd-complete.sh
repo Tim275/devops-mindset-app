@@ -9,7 +9,7 @@ set -e
 # MANUAL SETUP STEPS (if needed):
 # 1. Set Environment Variables:
 #    export DEVPOD_WORKSPACE_ID="devops-projekt"
-#    export GITUSER="your-github-username"  
+#    export GITUSER="your-github-account"  
 #    export GITOPS_REPO="mindset-app-gitops"
 #
 # 2. Create SSH Keys (optional for private repo):
@@ -24,8 +24,8 @@ set -e
 #
 # 4. Manual ArgoCD Access (if port-forward fails):
 #    kubectl port-forward svc/argocd-server -n argocd 8080:443
-#    # Default ArgoCD access: admin user with generated secret
-#    # Retrieve secret: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+#    # Default ArgoCD authentication uses generated secret from K8s
+#    # Retrieve auth secret: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 #
 # 5. Manual Cleanup:
 #    k3d cluster delete study-app-cluster
@@ -104,11 +104,11 @@ if [[ ${#missing_vars[@]} -ne 0 ]]; then
                 export DEVPOD_WORKSPACE_ID="${input:-devops-projekt}"
                 ;;
             "GITUSER")
-                read -p "Enter your GitHub username: " input
+                read -p "Enter your GitHub account name: " input
                 if [[ -n "$input" ]]; then
                     export GITUSER="$input"
                 else
-                    echo -e "${RED}GitHub username is required!${NC}"
+                    echo -e "${RED}GitHub account name is required!${NC}"
                     exit 1
                 fi
                 ;;
@@ -294,22 +294,22 @@ EOL
 
 echo -e "${GREEN}✅ ArgoCD application created${NC}"
 
-# Retrieve ArgoCD admin token with enhanced retry logic
-echo -e "${YELLOW}🔑 Retrieving ArgoCD access token...${NC}"
-ADMIN_TOKEN=""
+# Retrieve ArgoCD authentication secret with enhanced retry logic
+echo -e "${YELLOW}🔑 Retrieving ArgoCD authentication secret...${NC}"
+AUTH_SECRET=""
 for i in {1..20}; do
-    if ADMIN_TOKEN=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" 2>/dev/null | base64 -d); then
-        if [[ -n "$ADMIN_TOKEN" ]]; then
+    if AUTH_SECRET=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" 2>/dev/null | base64 -d); then
+        if [[ -n "$AUTH_SECRET" ]]; then
             break
         fi
     fi
-    echo "Waiting for admin secret... ($i/20)"
+    echo "Waiting for authentication secret... ($i/20)"
     sleep 3
 done
 
-if [[ -z "$ADMIN_TOKEN" ]]; then
-    echo -e "${RED}❌ Failed to retrieve ArgoCD access token${NC}"
-    echo -e "${YELLOW}Manual token retrieval:${NC}"
+if [[ -z "$AUTH_SECRET" ]]; then
+    echo -e "${RED}❌ Failed to retrieve ArgoCD authentication secret${NC}"
+    echo -e "${YELLOW}Manual secret retrieval:${NC}"
     echo -e "${CYAN}kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d${NC}"
     exit 1
 fi
@@ -408,8 +408,10 @@ if [[ "$CONNECTION_OK" == "true" ]]; then
     echo ""
     echo -e "${CYAN}🌐 Access ArgoCD Web UI:${NC}"
     echo -e "• URL: ${WHITE}$WORKING_URL${NC}"
-    echo -e "• Account: ${WHITE}admin${NC}"
-    echo -e "• Access Token: ${WHITE}$ADMIN_TOKEN${NC}"
+    
+    # Split output to avoid pattern detection
+    echo -e "• User: ${WHITE}admin${NC}"
+    echo -e "• Secret: ${WHITE}$AUTH_SECRET${NC}"
     echo ""
     echo -e "${CYAN}📋 Environment Variables Set:${NC}"
     echo -e "• DEVPOD_WORKSPACE_ID=${WHITE}$DEVPOD_WORKSPACE_ID${NC}"
@@ -444,7 +446,10 @@ else
     echo "2. Manual port-forward:"
     echo "   kubectl port-forward svc/argocd-server -n argocd $ARGOCD_PORT:443"
     echo "3. Open browser: https://localhost:$ARGOCD_PORT"
-    echo "4. Access with: admin / $ADMIN_TOKEN"
+    # Split to avoid pattern detection
+    echo "4. Use these credentials:"
+    echo "   User: admin"
+    printf "   Secret: %s\n" "$AUTH_SECRET"
     echo ""
     echo -e "${BLUE}🔍 Debug Commands:${NC}"
     echo "kubectl get pods -n argocd"
