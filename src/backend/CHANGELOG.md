@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.0](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.9.0...backend-v0.10.0) (2025-06-19)
+
+
+### Features
+
+* **new-code-change:** new code change for pipeline testing ([1588fb5](https://github.com/Tim275/devops-mindset-app/commit/1588fb5887784e2fb77dd6df8fa0ace2f9c5c93f))
+* **new-code-change:** new code change for pipeline testing ([36c9993](https://github.com/Tim275/devops-mindset-app/commit/36c99932ef675bf15b4e95d4d6c32012f1e4cc6b))
+
 ## [0.9.0](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.8.0...backend-v0.9.0) (2025-06-19)
 
 
