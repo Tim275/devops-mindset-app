@@ -118,15 +118,12 @@ config.local.json
 **/.mypy_cache/
 **/.tox/
 
+# Generated scripts
+scripts/setup-argocd-gitops
 
+# Main config (generated file)
 main-ruleset.json
-# Local environment files
 
-<<<<<<< HEAD
-
-dev-keys
-
-=======
 # === Security & Credentials ===
 # SSH Keys and Deploy Keys - NEVER commit these!
 dev-keys/
@@ -146,4 +143,3 @@ kubeconfig*
 .env.production
 secrets.yaml
 secrets.json
->>>>>>> 2fc1954c99adcad219e38b42fcb5f10aff1d94f7

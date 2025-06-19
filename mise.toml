@@ -1,4 +1,3 @@
-# mise.toml
 [tools]
 python = "3.13"        # 🐍 Latest Python version
 uv = "latest"          # ⚡ Ultra-fast package management (10-100x faster)
@@ -9,15 +8,69 @@ trivy = "latest"       # 🔍 Security vulnerability scanner
 kubectl = "latest"     # ⚓ Kubernetes CLI
 k3d = "latest"         # ☸️ Local Kubernetes clusters
 k9s = "latest"         # 📊 Kubernetes dashboard TUI
+argocd = "latest"      # 🚀 GitOps continuous delivery
+yq = "latest"          # 📝 YAML processor - NEEDED FOR GITOPS
 
 [env]
 APP_REPO = 'devops-projekt'
 GH_REPO = 'devops-projekt'
+GITOPS_REPO = 'mindset-app-gitops'
+DEVPOD_WORKSPACE_ID = 'devops-projekt'
 
 [settings]
 python.uv_venv_auto = true
-idiomatic_version_file_enable_tools = ["python"]
+idiomatic_version_file_enable_tools = ["python"] 
 experimental = true
+
+[tasks.setup]
+description = "Trust and install all tools"
+run = """
+/usr/local/bin/mise trust /workspaces/"$DEVPOD_WORKSPACE_ID"/mise.toml
+/usr/local/bin/mise install
+"""
+
+[tasks.setup-dev-env]
+description = "Complete development environment setup"
+run = """
+echo "🚀 Setting up complete development environment..."
+mise run setup
+scripts/setup-commitizen  # ← Ohne .sh
+echo "✅ Development environment ready!"
+"""
+
+[tasks.setup-commitizen]
+description = "Setup Commitizen and conventional commits"
+run = "scripts/setup-commitizen"  # ← Ohne .sh
+
+[tasks.commit]
+description = "Interactive commit with Commitizen"
+run = """
+if ! command -v cz >/dev/null; then
+  echo "🔧 Commitizen not found, installing..."
+  mise run setup-commitizen
+fi
+cz commit
+"""
+
+[tasks.changelog]
+description = "Generate changelog with Commitizen"
+run = """
+if ! command -v cz >/dev/null; then
+  echo "🔧 Commitizen not found, installing..."
+  mise run setup-commitizen
+fi
+cz changelog
+"""
+
+[tasks.bump]
+description = "Bump version with Commitizen"
+run = """
+if ! command -v cz >/dev/null; then
+  echo "🔧 Commitizen not found, installing..."
+  mise run setup-commitizen
+fi
+cz bump
+"""
 
 [tasks.e2e-setup]
 description = "Setup E2E testing"
@@ -33,18 +86,138 @@ cd kubernetes
 uv run python e2e_test.py
 """
 
+[tasks.setup-gitops]
+description = "Setup ArgoCD GitOps"
+run = """
+export DEVPOD_WORKSPACE_ID="${DEVPOD_WORKSPACE_ID:-devops-projekt}"
+export GITUSER="${GITUSER:-Tim275}"
+export GITOPS_REPO="${GITOPS_REPO:-mindset-app-gitops}"
+scripts/setup-argocd-gitops.sh
+"""
+
+[tasks.gitops-flux]
+description = "Setup Flux GitOps"
+run = """
+export DEVPOD_WORKSPACE_ID="${DEVPOD_WORKSPACE_ID:-devops-projekt}"
+export GITUSER="${GITUSER:-Tim275}"
+export GITOPS_REPO="${GITOPS_REPO:-mindset-app-gitops}"
+scripts/setup-flux-gitops.sh
+"""
+
+[tasks.setup-deploy-keys]
+description = "Setup SSH deploy keys for GitOps"
+run = """
+export DEVPOD_WORKSPACE_ID="${DEVPOD_WORKSPACE_ID:-devops-projekt}"
+export GITUSER="${GITUSER:-Tim275}"
+export GITOPS_REPO="${GITOPS_REPO:-mindset-app-gitops}"
+scripts/setup-deploy-key
+"""
+
+[tasks.cluster-minimal]
+description = "Create minimal k3d cluster"
+run = "scripts/setup-minimal-cluster.sh"
+
+[tasks.deploy-k3d]
+description = "Deploy app to k3d cluster"
+run = "kubernetes/deploy-to-k3d.sh"
+
+[tasks.test-release-backend]
+description = "Test backend release workflow"
+run = """
+echo "🚀 Testing backend release workflow..."
+export VERSION="${1:-$(date +v1.%m.%d-test)}"
+echo "Creating backend release: backend-$VERSION"
+git tag "backend-$VERSION"
+echo ""
+echo "🔥 To trigger CI/CD pipeline:"
+echo "git push origin backend-$VERSION"
+echo ""
+echo "This will:"
+echo "1. 🐳 Build & push backend container"
+echo "2. 🔄 Auto-update dev environment in GitOps repo"
+echo "3. 📝 Create PR for prod environment"
+"""
+
+[tasks.test-release-frontend]
+description = "Test frontend release workflow"
+run = """
+echo "🚀 Testing frontend release workflow..."
+export VERSION="${1:-$(date +v1.%m.%d-test)}"
+echo "Creating frontend release: frontend-$VERSION"
+git tag "frontend-$VERSION"
+echo ""
+echo "🔥 To trigger CI/CD pipeline:"
+echo "git push origin frontend-$VERSION"
+echo ""
+echo "This will:"
+echo "1. 🐳 Build & push frontend container"
+echo "2. 🔄 Auto-update dev environment in GitOps repo"
+echo "3. 📝 Create PR for prod environment"
+"""
+
+[tasks.lint]
+description = "Run code quality checks"
+run = """
+echo "🧹 Running code quality checks..."
+ruff check .
+ruff format --check .
+echo "✅ Code quality checks passed!"
+"""
+
+[tasks.fix]
+description = "Auto-fix code quality issues"
+run = """
+echo "🔧 Auto-fixing code quality issues..."
+ruff check --fix .
+ruff format .
+echo "✅ Code formatting applied!"
+"""
 
 [hooks]
 enter = """
 echo '🎯 DevOps Environment Ready!'
 echo ''
-echo '🔧 Tools installed: 🐍 python ⚡ uv 🐳 docker ☸️ k3d ⚓ kubectl 📊 k9s'
+echo '🔧 Tools installed: 🐍 python ⚡ uv 🐳 docker ☸️ k3d ⚓ kubectl 📊 k9s 🚀 argocd 📝 yq'
 echo ''
 echo '❓ What do you want to do?'
 echo '  1️⃣  Start services:     🐳 docker compose up --build'
-echo '  2️⃣  Create K8s cluster: ☸️ k3d cluster create devops-study'
-echo '  3️⃣  View cluster:       ⚓ kubectl get nodes'
-echo '  4️⃣  Open K8s dashboard: 📊 k9s'
-echo '  5️⃣  Local development:  🚀 scripts/start_modern_local'
+echo '  2️⃣  Create K8s cluster: ☸️ mise run cluster-minimal'
+echo '  3️⃣  Setup ArgoCD:       🎯 mise run setup-gitops'
+echo '  4️⃣  Setup Flux:         🌊 mise run gitops-flux'
+echo '  5️⃣  Deploy to k3d:      🚀 mise run deploy-k3d'
+echo '  6️⃣  Run E2E tests:      🧪 mise run e2e-test'
+echo '  7️⃣  View cluster:       ⚓ kubectl get nodes'
+echo '  8️⃣  Open K8s dashboard: 📊 k9s'
+echo ''
+echo '🛠️ Development Workflow:'
+echo '   mise run setup-dev-env     # Complete dev environment setup'
+echo '   mise run commit             # Interactive conventional commits'
+echo '   mise run lint               # Code quality checks'
+echo '   mise run fix                # Auto-fix code issues'
+echo '   mise run changelog          # Generate changelog'
+echo '   mise run bump               # Semantic version bump'
+echo ''
+echo '🛠️  Available mise tasks:'
+echo '   mise run setup              # Trust and install all tools'
+echo '   mise run setup-commitizen  # Setup conventional commits'
+echo '   mise run setup-deploy-keys # Setup SSH keys for GitOps'
+echo '   mise run cluster-minimal   # Create basic k3d cluster'
+echo '   mise run setup-gitops      # Setup ArgoCD GitOps workflow'
+echo '   mise run gitops-flux       # Setup Flux GitOps workflow'
+echo '   mise run deploy-k3d        # Deploy app to k3d cluster'
+echo '   mise run e2e-setup         # Setup E2E testing environment'
+echo '   mise run e2e-test          # Run complete E2E test suite'
+echo '   mise run test-release-backend   # Test backend release workflow'
+echo '   mise run test-release-frontend  # Test frontend release workflow'
+echo ''
+echo '🎯 Complete Development Workflow:'
+echo '   1. mise run setup-dev-env       # Complete environment setup'
+echo '   2. mise run commit              # Conventional commits'
+echo '   3. mise run test-release-backend # Test release'
+echo '   4. git push origin backend-v1.0.0  # Trigger GitOps CI/CD'
+echo ''
+echo '📋 GitOps Repository Structure:'
+echo '   mindset-app-gitops/apps/dev/    → Auto-updated on release'
+echo '   mindset-app-gitops/apps/prod/   → PR created for approval'
 echo ''
 """
