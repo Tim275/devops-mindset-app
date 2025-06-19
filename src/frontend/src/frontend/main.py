@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Environment-based API URL2
+# Environment-based API URL222
 API_URL = os.getenv("API_URL", "http://localhost:22112")
 
 

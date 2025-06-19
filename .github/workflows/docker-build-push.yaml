@@ -21,6 +21,10 @@ jobs:
       contents: read
       packages: write
 
+    outputs:
+      tag: ${{ steps.tag.outputs.TAG }}
+      image: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,13 +36,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract tag name
+        id: tag
+        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
       - name: Build and Push Backend
         uses: docker/build-push-action@v5
         with:
           context: ./src/backend
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ steps.tag.outputs.TAG }}
             ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:latest
 
   build-and-push-frontend:
@@ -50,6 +58,10 @@ jobs:
       contents: read
       packages: write
 
+    outputs:
+      tag: ${{ steps.tag.outputs.TAG }}
+      image: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,11 +73,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract tag name
+        id: tag
+        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
       - name: Build and Push Frontend
         uses: docker/build-push-action@v5
         with:
           context: ./src/frontend
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ steps.tag.outputs.TAG }}
             ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
+
+  trigger_gitops:
+    name: Trigger GitOps
+    needs: [build-and-push-backend, build-and-push-frontend]
+    if: always() && (needs.build-and-push-backend.result == 'success' || needs.build-and-push-frontend.result == 'success')
+    uses: ./.github/workflows/update-gitops.yaml
+    with:
+      tag: ${{ needs.build-and-push-backend.outputs.tag || needs.build-and-push-frontend.outputs.tag }}
+      image: ${{ needs.build-and-push-backend.outputs.image || needs.build-and-push-frontend.outputs.image }}
+    secrets:
+      GITOPS_DEPLOY_KEY: ${{ secrets.GITOPS_DEPLOY_KEY }}
+      DEVOPS_STUDY_APP: ${{ secrets.DEVOPS_STUDY_APP }}

@@ -1,0 +1,96 @@
+name: Update GitOps Repository
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+        description: "The tag name of the release"
+      image:
+        required: true
+        type: string
+        description: "The image being updated"
+    secrets:
+      GITOPS_DEPLOY_KEY:
+        required: true
+        description: "Deploy key for GitOps repository"
+      DEVOPS_STUDY_APP:
+        required: true
+        description: "PAT GitOps repository"
+
+jobs:
+  update-gitops:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Actions Repo
+        uses: actions/checkout@v4
+        with:
+          path: actions-repo
+
+      - name: Checkout GitOps repository
+        uses: actions/checkout@v4
+        with:
+          repository: Tim275/mindset-app-gitops
+          ref: main
+          path: mindset-app-gitops
+          ssh-key: ${{ secrets.GITOPS_DEPLOY_KEY }}
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Determine app name from image
+        id: app
+        run: |
+          if [[ "${{ inputs.image }}" == *"backend"* ]]; then
+            echo "name=backend" >> $GITHUB_OUTPUT
+          elif [[ "${{ inputs.image }}" == *"frontend"* ]]; then
+            echo "name=frontend" >> $GITHUB_OUTPUT
+          else
+            echo "Unknown app type" && exit 1
+          fi
+
+      - name: Update Image Tags Dev
+        run: |
+          KUSTOMIZATION_FILE="./mindset-app-gitops/apps/dev/kustomization.yaml"
+          SCRIPT_PATH="./actions-repo/scripts/update_kustomize_tag"
+
+          echo "Calling update script with tag: ${{ inputs.tag }}, file: $KUSTOMIZATION_FILE, image: ${{ steps.app.outputs.name }}"
+          "$SCRIPT_PATH" "${{ inputs.tag }}" "$KUSTOMIZATION_FILE" "${{ steps.app.outputs.name }}"
+
+      - uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitOps Bot
+          author_email: gitops-bot@github.com
+          cwd: ./mindset-app-gitops
+          message: Update ${{ inputs.image }} deployment with tag "${{ inputs.tag }}"
+
+      - name: Update Image Tags Prod
+        run: |
+          KUSTOMIZATION_FILE="./mindset-app-gitops/apps/prod/kustomization.yaml"
+          SCRIPT_PATH="./actions-repo/scripts/update_kustomize_tag"
+
+          echo "Calling update script with tag: ${{ inputs.tag }}, file: $KUSTOMIZATION_FILE, image: ${{ steps.app.outputs.name }}"
+          "$SCRIPT_PATH" "${{ inputs.tag }}" "$KUSTOMIZATION_FILE" "${{ steps.app.outputs.name }}"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.DEVOPS_STUDY_APP }}
+          path: ./mindset-app-gitops
+          commit-message: Update prod deployments to tag ${{ inputs.tag }}
+          committer: GitOps Bot <gitops-bot@github.com>
+          author: GitOps Bot <gitops-bot@github.com>
+          branch: gitops/update-tag-${{ inputs.image }}
+          delete-branch: true
+          title: "Update prod image tag to ${{ inputs.tag }}"
+          body: |
+            Update image tag in the prod environment kustomization for ${{ inputs.image }}.
+          labels: |
+            automated-pr
+            gitops
