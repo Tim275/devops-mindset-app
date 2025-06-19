@@ -44,24 +44,18 @@ jobs:
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
 
-      - name: Determine app name from image
-        id: app
-        run: |
-          if [[ "${{ inputs.image }}" == *"backend"* ]]; then
-            echo "name=backend" >> $GITHUB_OUTPUT
-          elif [[ "${{ inputs.image }}" == *"frontend"* ]]; then
-            echo "name=frontend" >> $GITHUB_OUTPUT
-          else
-            echo "Unknown app type" && exit 1
-          fi
-
       - name: Update Image Tags Dev
         run: |
-          KUSTOMIZATION_FILE="./mindset-app-gitops/apps/dev/kustomization.yaml"
+          # Define the target kustomization file
+          KUSTOMIZATION_FILE="./mindset-app-gitops/apps/dev/kustomization.yaml"  
           SCRIPT_PATH="./actions-repo/scripts/update_kustomize_tag"
 
-          echo "Calling update script with tag: ${{ inputs.tag }}, file: $KUSTOMIZATION_FILE, image: ${{ steps.app.outputs.name }}"
-          "$SCRIPT_PATH" "${{ inputs.tag }}" "$KUSTOMIZATION_FILE" "${{ steps.app.outputs.name }}"
+          # Make script executable
+          chmod +x "$SCRIPT_PATH"
+
+          # Call the script with the input tag, kustomization file path, and image name
+          echo "Calling update script with tag: ${{ inputs.tag }}, file: $KUSTOMIZATION_FILE, image: ${{ inputs.image }}"
+          "$SCRIPT_PATH" "${{ inputs.tag }}" "$KUSTOMIZATION_FILE" "${{ inputs.image }}"
 
       - uses: EndBug/add-and-commit@v9
         with:
@@ -72,11 +66,13 @@ jobs:
 
       - name: Update Image Tags Prod
         run: |
+          # Define the target kustomization file
           KUSTOMIZATION_FILE="./mindset-app-gitops/apps/prod/kustomization.yaml"
           SCRIPT_PATH="./actions-repo/scripts/update_kustomize_tag"
 
-          echo "Calling update script with tag: ${{ inputs.tag }}, file: $KUSTOMIZATION_FILE, image: ${{ steps.app.outputs.name }}"
-          "$SCRIPT_PATH" "${{ inputs.tag }}" "$KUSTOMIZATION_FILE" "${{ steps.app.outputs.name }}"
+          # Call the script with the input tag, kustomization file path, and image name
+          echo "Calling update script with tag: ${{ inputs.tag }}, file: $KUSTOMIZATION_FILE, image: ${{ inputs.image }}"
+          "$SCRIPT_PATH" "${{ inputs.tag }}" "$KUSTOMIZATION_FILE" "${{ inputs.image }}"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
