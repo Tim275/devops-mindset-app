@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.9.0...frontend-v0.10.0) (2025-06-19)
+
+
+### Features
+
+* **NEW-version-for-testing:** add version info to backend and frontend for GitOps testing ([9d4f6de](https://github.com/Tim275/devops-mindset-app/commit/9d4f6de37f5b9b575ad9ae77cf8faea3841a0710))
+
 ## [0.9.0](https://github.com/Tim275/devops-mindset-app/compare/frontend-v0.8.0...frontend-v0.9.0) (2025-06-17)
 
 
