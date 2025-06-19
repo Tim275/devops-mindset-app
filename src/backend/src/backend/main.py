@@ -123,7 +123,6 @@ async def read_stats():
 
 
 # Marker for CI pipeline
-# Thisxxxx comment is used to trigger the CI pipeline when changes are made to this fileeeeee.
 # This comment is used to trigger the CI pipeline when changes are made to this file
 # This comment is used to trigger the CI pipeline when changes are made to this file.
 # This comment is used to trigger the CI pipeline when changes are made to this file.
