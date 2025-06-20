@@ -18,8 +18,7 @@
     }
   },
   "runArgs": [
-    "--memory=4g",
-    "--cpus=2",
-    "--privileged"
+    "--memory=5g",
+    "--cpus=3"
   ]
 }
