@@ -151,7 +151,7 @@ def main():
     logger.info("Starting Flask application...")
     logger.info(f"API URL: {API_URL}")
 
-    # Debug routes213123213213321
+    # Debug routes
     debug_routes()
 
     app.run(host="0.0.0.0", port=22111, debug=True)
