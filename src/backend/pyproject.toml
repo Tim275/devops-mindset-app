@@ -1,6 +1,6 @@
 [project]
 name = "study-tracker-backend"
-version = "0.11.2"  # Updated version
+version = "0.11.3"  # Updated version
 description = "Backend API for tracking study time for DevOps certifications"
 readme = "README.md"
 authors = [{ name = "Your Name", email = "your@email.com" }]

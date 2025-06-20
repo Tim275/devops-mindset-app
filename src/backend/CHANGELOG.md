@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.3](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.11.2...backend-v0.11.3) (2025-06-20)
+
+
+### Bug Fixes
+
+* **bakcned-frontend-change:** just for pipeline testing ([d99bf0c](https://github.com/Tim275/devops-mindset-app/commit/d99bf0c35dbda23c6c7bf5f7c75ded7c83b5eea3))
+* **bakcned-frontend-change:** just for pipeline testing ([c41fc4d](https://github.com/Tim275/devops-mindset-app/commit/c41fc4d40945c3ec0771b5b523cfdf54c8e4e36b))
+
 ## [0.11.2](https://github.com/Tim275/devops-mindset-app/compare/backend-v0.11.1...backend-v0.11.2) (2025-06-20)
 
 
