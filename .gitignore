@@ -143,3 +143,7 @@ kubeconfig*
 .env.production
 secrets.yaml
 secrets.json
+
+
+mindset-app-gitops
+
